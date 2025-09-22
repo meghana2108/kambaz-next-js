@@ -3,7 +3,7 @@ export default function Kambaznavigation() {
     return (
         <div>
             <ul>
-                <li><a href="www.northeastern.edu" target="_blank" >Northeastern</a></li>
+                <li><Link href="www.northeastern.edu" target="_blank" >Northeastern</Link></li>
                 <li><Link href="/account">Account</Link></li>
                 <li><Link href="/dashboard">Dashboard</Link></li>
                 <li><Link href="/dashboard">Courses</Link></li>
