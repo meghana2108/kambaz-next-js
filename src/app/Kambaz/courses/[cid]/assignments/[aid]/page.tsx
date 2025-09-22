@@ -64,15 +64,15 @@ export default function Assignmenteditor() {
             </div>
             <br />
             <div id="wd-assignment-due-date">
-                Due Date : <input type="date" id="wd-assignment-due-date" />
+                Due Date : <input type="date" id="wd-assignment-due-date" defaultValue={"2025-09-22"}/>
             </div>
             <br />
             <div id="wd-assignment-available-from">
-                Available From : <input type="date" id="wd-assignment-available-from" />
+                Available From : <input type="date" id="wd-assignment-available-from" defaultValue={"2025-09-08"}/>
             </div>
             <br />
             <div id="wd-assignment-available-until">
-                Available Until : <input type="date" id="wd-assignment-available-until" />
+                Available Until : <input type="date" id="wd-assignment-available-until" defaultValue={"2025-09-22"}/>
             </div>
             <br />
             <button id="wd-assignment-save">Save</button>

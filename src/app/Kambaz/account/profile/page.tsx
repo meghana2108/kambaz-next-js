@@ -15,7 +15,7 @@ export default function profile() {
                 <option value="Admin">Admin</option>
                 <option value="User">User</option>
             </select><br />
-            <Link href="/">Sign out</Link><br />
+            <Link href="/kambaz/account/signin">Sign out</Link><br />
         </div>
     );
 }

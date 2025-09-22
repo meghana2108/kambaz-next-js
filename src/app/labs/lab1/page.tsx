@@ -123,7 +123,7 @@ export default function Lab1() {
         <h3>Local Image</h3>
         Loading an image from local system: <br/>
         <img 
-        src="/download.jpeg" 
+        src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Tesla-optimus-bot-gen-2-scaled_%28cropped%29.jpg/1280px-Tesla-optimus-bot-gen-2-scaled_%28cropped%29.jpg" 
         alt="Tesla bot Image from local" 
         width="500" 
         height="300"/>
