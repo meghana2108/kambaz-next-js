@@ -4,7 +4,7 @@ export default function Kambaz() {
         <div>
             <h1>Kambaz</h1>
             <p>Welcome to Kambaz!</p>
-            <Link href="/account/signin">Sign In to Kambaz</Link>
+            <Link href="/kambaz/account/signin">Sign In to Kambaz</Link>
         </div>
     );
 }

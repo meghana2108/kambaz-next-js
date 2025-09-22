@@ -7,9 +7,9 @@ export default function SignIn() {
             <br />
             <input type="password" name="password" placeholder="Enter password" />
             <br />
-            <Link href="/dashboard">Sign In</Link>
-            <br />  
-            New User? <Link href="signup"> Sign Up</Link>
+            <Link href="/kambaz/dashboard">Sign In</Link>
+            <br />
+            New User? <Link href="/kambaz/account/signup"> Sign Up</Link>
         </div>
     );
 }

@@ -7,7 +7,7 @@ export default function Dashboard() {
             <h2 id="wd-dashboard-published">Published Courses</h2>
             <div id="wd-dashboard-courses">
                 <div className="wd-dashboard-course1">
-                <Link href="/courses/cs101/home" className="wd-dashboard-course-link">
+                <Link href="/kambaz/courses/cs101/home" className="wd-dashboard-course-link">
                         <Image src="/images/fsd.png" alt="HTML5" width={200} height={150} />
                     <div>
                         <h5>cs101 React JS</h5>
@@ -17,7 +17,7 @@ export default function Dashboard() {
                 </Link>
             </div>
             <div className="wd-dashboard-course2">
-                <Link href="/courses/cs101/home" className="wd-dashboard-course-link">
+                <Link href="/kambaz/courses/cs101/home" className="wd-dashboard-course-link">
                     <Image src="/images/ds.jpeg" alt="HTML5" width={200} height={150} />
                     <div>
                         <h5>ds201 React JS</h5>
@@ -27,7 +27,7 @@ export default function Dashboard() {
                 </Link>
             </div>
             <div className="wd-dashboard-course3">
-                <Link href="/courses/cs101/home" className="wd-dashboard-course-link">
+                <Link href="/kambaz/courses/cs101/home" className="wd-dashboard-course-link">
                     <Image src="/images/cc.jpeg" alt="HTML5" width={200} height={150} />
                     <div>
                         <h5>cc301 React JS</h5>
