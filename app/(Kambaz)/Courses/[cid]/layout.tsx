@@ -1,18 +1,16 @@
-// layout.tsx
 import { ReactNode } from "react";
 import CourseNavigation from "./Navigation";
 
-interface CoursesLayoutProps {
+type LayoutPropsForCourse = {
   children: ReactNode;
   params: Promise<{ cid: string }>;
-}
+};
 
 export default async function CoursesLayout({
   children,
   params,
-}: CoursesLayoutProps) {
+}: LayoutPropsForCourse) {
   const { cid } = await params;
-
   return (
     <div id="wd-courses">
       <h2>Courses {cid}</h2>
@@ -21,7 +19,7 @@ export default async function CoursesLayout({
         <tbody>
           <tr>
             <td valign="top" width="200">
-              <CourseNavigation cid={cid} />
+              <CourseNavigation />
             </td>
             <td valign="top" width="100%">
               {children}
