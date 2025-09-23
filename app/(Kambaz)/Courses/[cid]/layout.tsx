@@ -1,13 +1,16 @@
+// layout.tsx
 import { ReactNode } from "react";
 import CourseNavigation from "./Navigation";
+
+interface CoursesLayoutProps {
+  children: ReactNode;
+  params: Promise<{ cid: string }>;
+}
 
 export default async function CoursesLayout({
   children,
   params,
-}: {
-  children: ReactNode;
-  params: Promise<{ cid: string }>;
-}) {
+}: CoursesLayoutProps) {
   const { cid } = await params;
 
   return (
