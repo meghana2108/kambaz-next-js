@@ -11,6 +11,7 @@ export default async function CoursesLayout({
   params,
 }: LayoutPropsForCourse) {
   const { cid } = await params;
+
   return (
     <div id="wd-courses">
       <h2>Courses {cid}</h2>
@@ -19,7 +20,7 @@ export default async function CoursesLayout({
         <tbody>
           <tr>
             <td valign="top" width="200">
-              <CourseNavigation />
+              <CourseNavigation cid={cid} />
             </td>
             <td valign="top" width="100%">
               {children}
