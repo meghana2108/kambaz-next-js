@@ -245,7 +245,7 @@ export default function Lab1() {
     <input type="range" id="wd-lab1-ratings" min="1" max="5" />
     <br /><br />
     <label htmlFor='wd-lab1-date-of-birth'>Date of birth: </label>
-    <input type="date" id="wd-lab1-date-of-birth" value={"2000-01-01"}/>
+    <input type="date" id="wd-lab1-date-of-birth" defaultValue="2000-01-01"/>
     <br /><br />
 </div>
 <h4>Anchor tag</h4>
