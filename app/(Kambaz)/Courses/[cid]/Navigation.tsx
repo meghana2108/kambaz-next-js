@@ -1,4 +1,3 @@
-// Navigation.tsx
 import Link from "next/link";
 
 interface CourseNavigationProps {
@@ -16,14 +15,6 @@ export default function CourseNavigation({ cid }: CourseNavigationProps) {
         Modules
       </Link>
       <br />
-      <Link href={`/Courses/${cid}/Piazza`} id="wd-course-piazza-link">
-        Piazza
-      </Link>
-      <br />
-      <Link href={`/Courses/${cid}/Zoom`} id="wd-course-zoom-link">
-        Zoom
-      </Link>
-      <br />
       <Link
         href={`/Courses/${cid}/Assignments`}
         id="wd-course-assignments-link"
@@ -31,17 +22,51 @@ export default function CourseNavigation({ cid }: CourseNavigationProps) {
         Assignments
       </Link>
       <br />
-      <Link href={`/Courses/${cid}/Quizzes`} id="wd-course-quizzes-link">
+
+      <a
+        href="https://piazza.com/class/mf08v5tcamaem/post/8"
+        target="_blank"
+        rel="noopener noreferrer"
+        id="wd-course-piazza-link"
+      >
+        Piazza
+      </a>
+      <br />
+      <a
+        href="https://zoom.us/signin#/login"
+        target="_blank"
+        rel="noopener noreferrer"
+        id="wd-course-zoom-link"
+      >
+        Zoom
+      </a>
+      <br />
+      <a
+        href="https://northeastern.instructure.com/courses/225988/quizzes"
+        target="_blank"
+        rel="noopener noreferrer"
+        id="wd-course-quizzes-link"
+      >
         Quizzes
-      </Link>
+      </a>
       <br />
-      <Link href={`/Courses/${cid}/Grades`} id="wd-course-grades-link">
+      <a
+        href="https://northeastern.instructure.com/courses/225988/grades"
+        target="_blank"
+        rel="noopener noreferrer"
+        id="wd-course-grades-link"
+      >
         Grades
-      </Link>
+      </a>
       <br />
-      <Link href={`/Courses/${cid}/People/Table`} id="wd-course-people-link">
+      <a
+        href="https://northeastern.instructure.com/courses/225988/users"
+        target="_blank"
+        rel="noopener noreferrer"
+        id="wd-course-people-link"
+      >
         People
-      </Link>
+      </a>
     </div>
   );
 }

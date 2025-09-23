@@ -8,6 +8,9 @@ export default function Labs() {
 
       <p id="wd-name">Meghana Raghavendra</p>
 
+      <p id="wd-class">Offline batch</p>
+      <p id="wd-section">Section: 18616 </p>
+
       <p>
         <a
           id="wd-github"

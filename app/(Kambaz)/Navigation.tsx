@@ -1,8 +1,14 @@
 import Link from "next/link";
+
 export default function KambazNavigation() {
   return (
     <div id="wd-kambaz-navigation">
-      <a href="https://www.northeastern.edu/" id="wd-neu-link" target="_blank">
+      <a
+        href="https://www.northeastern.edu/"
+        id="wd-neu-link"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
         Northeastern
       </a>
       <br />
@@ -18,13 +24,23 @@ export default function KambazNavigation() {
         Courses
       </Link>
       <br />
-      <Link href="/Calendar" id="wd-calendar-link">
+      <a
+        href="https://northeastern.instructure.com/calendar#view_name=month&view_start=2025-09-22"
+        target="_blank"
+        rel="noopener noreferrer"
+        id="wd-calendar-link"
+      >
         Calendar
-      </Link>
+      </a>
       <br />
-      <Link href="/Inbox" id="wd-inbox-link">
+      <a
+        href="https://northeastern.instructure.com/conversations#filter=type=inbox"
+        target="_blank"
+        rel="noopener noreferrer"
+        id="wd-inbox-link"
+      >
         Inbox
-      </Link>
+      </a>
       <br />
       <Link href="/Labs" id="wd-labs-link">
         Labs
