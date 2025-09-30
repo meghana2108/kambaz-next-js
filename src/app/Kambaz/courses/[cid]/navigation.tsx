@@ -11,6 +11,8 @@ export default function CoursesNavigation() {
         <li><Link href="/kambaz/courses/cs101/quizzes" id="wd-course-cs101-quizzes">Quizzes</Link></li>
         <li><Link href="/kambaz/courses/cs101/grades" id="wd-course-cs101-grades">Grades</Link></li>
         <li><Link href="/kambaz/courses/cs101/people" id="wd-course-cs101-people">People</Link></li>
+        <li><Link href="/kambaz/courses/cs101/exams" id="wd-course-cs101-exam">Exams</Link></li>
+        <li><Link href="/kambaz/courses/cs101/project" id="wd-course-cs101-project">Project</Link></li>
             </ul>
         </div>
     );
