@@ -1,21 +1,22 @@
 import Link from "next/link";
+import { FormControl, FormSelect } from "react-bootstrap";
 export default function profile() {
     return (
         <div style={{ width: "300px" }}>
             <h3>Profile</h3>
-            <input type="text" defaultValue="John Doe" placeholder="username"/><br />
-            <input type="password" defaultValue="john123" placeholder="password"/><br />
-            <input type="text" defaultValue="John" placeholder="first name"/><br />
-            <input type="text" defaultValue="Doe" placeholder="last name"/><br />
-            <input type="date" defaultValue="2025-09-14" placeholder="date"/><br />
-            <input type="email" defaultValue="john.doe@example.com" placeholder="email"/>
-            <select defaultValue="Faculty">
+            <FormControl id="wd-full-name" className="mb-2" placeholder="username" defaultValue="John Doe"/>
+            <FormControl id="wd-password" className="mb-2" placeholder="password" defaultValue="johndoe123"/>
+            <FormControl id="wd-first-name" className="mb-2" placeholder="first name" defaultValue="John"/>
+            <FormControl id="wd-last-name" className="mb-2" placeholder="first name" defaultValue="Doe"/>
+            <FormControl id="wd-date" className="mb-2" type="date" placeholder="mm/dd/yyyy"/>
+            <FormControl id="wd-email" className="mb-2" placeholder="john.doe@example.com"/> 
+            <FormSelect className="mb-2">
                 <option value="Faculty">Faculty</option>
                 <option value="Student">Student</option>
                 <option value="Admin">Admin</option>
                 <option value="User">User</option>
-            </select><br />
-            <Link href="/kambaz/account/signin">Sign out</Link><br />
+            </FormSelect>
+            <Link id="wd-sign-out-btn" className="btn btn-primary w-100 mb-2"href="/kambaz/account/signin">Sign out</Link>
         </div>
     );
 }

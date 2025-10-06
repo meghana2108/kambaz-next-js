@@ -4,15 +4,15 @@ export default function AccountLayout({
     children,
  }: { children: ReactNode }) {
     return (
-        <div>
-            <table>
-                <tbody>
-                    <tr>
-                        <td valign="top" width="100px"><Accountnavigation /></td>
-                        <td valign="top" width="100px">{children}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+         <div id="wd-account">
+                    <div className="d-flex">
+                        <div>
+                            <Accountnavigation />
+                        </div>
+                        <div className="p-3 flex-fill" style={{maxWidth:"50%"}}>
+                            {children}
+                        </div>
+                    </div>
+                </div>
     );
 }
