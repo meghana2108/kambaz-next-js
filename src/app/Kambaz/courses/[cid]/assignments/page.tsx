@@ -3,6 +3,7 @@ import { ListGroup, ListGroupItem, Button, FormCheck, FormControl, InputGroup } 
 import { BsGripVertical } from "react-icons/bs";
 import LessonControlButtons from "../modules/LessonControlButtons";
 import { FaEllipsisV, FaPlus, FaSearch } from "react-icons/fa";
+import { SlBookOpen } from "react-icons/sl";
 export default function AssignmentsPage() {
     return (
         <div>
@@ -38,7 +39,7 @@ export default function AssignmentsPage() {
                 </div>
                         <ListGroupItem className="wd-lesson p-3 ps-6">
                             <div className="d-flex align-items-start">
-                                <BsGripVertical className="me-2 fs-5"/>
+                                <BsGripVertical className="me-2 fs-5"/><SlBookOpen className="me-2 fs-5 text-success"/>
                                 <div className="flex-fill">
                                 <Link href="/kambaz/courses/cs101/assignments/1" className="wd-assignment-link">A1 - ENV+HTML</Link><LessonControlButtons/>
                                 <p className="small mb-0">
@@ -49,7 +50,7 @@ export default function AssignmentsPage() {
                         </ListGroupItem>
                         <ListGroupItem className="wd-lesson p-3 ps-6">
                             <div className="d-flex align-items-start">
-                            <BsGripVertical className="me-2 fs-5"/>
+                            <BsGripVertical className="me-2 fs-5"/><SlBookOpen className="me-2 fs-5 text-success"/>
                                 <div className="flex-fill">
                                     <Link href="/kambaz/courses/cs101/assignments/1" className="wd-assignment-link">A2 - CSS+BOOTSTRAP</Link><LessonControlButtons/>          
                                     <p className="small mb-0">
@@ -60,7 +61,7 @@ export default function AssignmentsPage() {
                         </ListGroupItem>
                         <ListGroupItem className="wd-lesson p-3 ps-6">
                             <div className="d-flex align-items-start">
-                            <BsGripVertical className="me-2 fs-5"/>
+                            <BsGripVertical className="me-2 fs-5"/><SlBookOpen className="me-2 fs-5 text-success"/>
                                 <div className="flex-fill">
                                     <Link href="/kambaz/courses/cs101/assignments/1" className="wd-assignment-link">A3 - JS+REACT</Link><LessonControlButtons/>                      
                                     <p className="small mb-0">
@@ -84,7 +85,7 @@ export default function AssignmentsPage() {
                     </div>
                         <ListGroupItem className="wd-lesson p-3 ps-6">
                             <div className="d-flex align-items-start">
-                                <BsGripVertical className="me-2 fs-5"/>
+                                <BsGripVertical className="me-2 fs-5"/><SlBookOpen className="me-2 fs-5 text-success"/>
                                 <div className="flex-fill">
                                     <Link href="/kambaz/courses/cs101/assignments/1" className="wd-quiz-link">Q1</Link><LessonControlButtons/>                      
                                     <p className="small mb-0">
@@ -95,7 +96,7 @@ export default function AssignmentsPage() {
                         </ListGroupItem>
                                 <ListGroupItem className="wd-lesson p-3 ps-6">
                                     <div className="d-flex align-items-start">
-                                        <BsGripVertical className="me-2 fs-5"/>
+                                        <BsGripVertical className="me-2 fs-5"/><SlBookOpen className="me-2 fs-5 text-success"/>
                                         <div className="flex-fill">
                                         <Link href="/kambaz/courses/cs101/assignments/1" className="wd-quiz-link">Q2</Link><LessonControlButtons/>          
                                         <p>Not available until 29 Sep at 0:00 | Due 06 Oct at 23:59 | -/29 pts</p>
@@ -117,7 +118,7 @@ export default function AssignmentsPage() {
                     </div>
                             <ListGroupItem className="wd-lesson p-3 ps-6">
                                 <div className="d-flex align-items-start">
-                                    <BsGripVertical className="me-2 fs-5"/>
+                                    <BsGripVertical className="me-2 fs-5"/><SlBookOpen className="me-2 fs-5 text-success"/>
                                     <div className="flex-fill">
                                         <Link href="/kambaz/courses/cs101/assignments/1" className="wd-exam-link">X1</Link><LessonControlButtons/>                      
                                         <p>Due 3 Nov at 23:59 | -/100 pts</p>
@@ -126,7 +127,7 @@ export default function AssignmentsPage() {
                             </ListGroupItem>
                             <ListGroupItem className="wd-lesson p-3 ps-6">
                                 <div className="d-flex align-items-start">
-                                    <BsGripVertical className="me-2 fs-5"/>
+                                    <BsGripVertical className="me-2 fs-5"/><SlBookOpen className="me-2 fs-5 text-success"/>
                                     <div className="flex-fill">
                                         <Link href="/kambaz/courses/cs101/assignments/1" className="wd-exam-link">X2</Link><LessonControlButtons/>                      
                                         <p>Due 7 Dec at 23:59 | -/100 pts</p>
@@ -148,7 +149,7 @@ export default function AssignmentsPage() {
                     </div>
                             <ListGroupItem className="wd-lesson p-3 ps-6">
                                 <div className="d-flex align-items-start">
-                                    <BsGripVertical className="me-2 fs-5"/>
+                                    <BsGripVertical className="me-2 fs-5"/><SlBookOpen className="me-2 fs-5 text-success"/>
                                     <div className="flex-fill">
                                         <Link href="/kambaz/courses/cs101/assignments/1" className="wd-project-link">Project - Kambaz Quizzes</Link><LessonControlButtons/>                      
                                         <p>Due 7 Dec at 23:59 | -/100 pts</p>
@@ -157,7 +158,7 @@ export default function AssignmentsPage() {
                             </ListGroupItem>
                             <ListGroupItem className="wd-lesson p-3 ps-6">
                                 <div className="d-flex align-items-start">
-                                    <BsGripVertical className="me-2 fs-5"/>
+                                    <BsGripVertical className="me-2 fs-5"/><SlBookOpen className="me-2 fs-5 text-success"/>
                                     <div className="flex-fill">
                                         <Link href="/kambaz/courses/cs101/assignments/1" className="wd-project-link">Project - Kambaz Pazza</Link><LessonControlButtons/>                      
                                         <p>Due 7 Dec at 23:59 | -/100 pts</p>
@@ -166,7 +167,7 @@ export default function AssignmentsPage() {
                             </ListGroupItem>
                            <ListGroupItem className="wd-lesson p-3 ps-6">
                                 <div className="d-flex align-items-start">
-                                    <BsGripVertical className="me-2 fs-5"/>
+                                    <BsGripVertical className="me-2 fs-5"/><SlBookOpen className="me-2 fs-5 text-success"/>
                                     <div className="flex-fill">
                                         <Link href="/kambaz/courses/cs101/assignments/1" className="wd-project-link">Project - Social Newtwork</Link><LessonControlButtons/>                      
                                         <p>Due 7 Dec at 23:59 | -/100 pts</p>

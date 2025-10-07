@@ -12,7 +12,7 @@ export default function Kambaznavigation() {
     return (
         <ListGroup className="rounded-0 position-fixed bottom-0 top-0 d-none d-md-block bg-black z-2" style={{width:110}} id="wd-kambaz-navigation">
             <ListGroupItem className="bg-black text-center border-0" as="a" href="https://www.northeastern.edu/" id="wd-neu-link">
-                <img src="/images/NU_RGB_Notched-N_wordmark_RB.png" width="75px" alt="Northeastern University" />
+                <img src="/images/neu.png" width="75px" alt="Northeastern University" />
             </ListGroupItem>
             <ListGroupItem className="border-0 bg-black text-center">
                 <Link href="/kambaz/account/profile" id="wd-account-link" className="text-white text-decoration-none">
