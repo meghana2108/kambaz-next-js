@@ -1,59 +1,165 @@
+"use client";
+
 import Link from "next/link";
+import {
+  ListGroup,
+  ListGroupItem,
+  Button,
+  Form,
+  InputGroup,
+} from "react-bootstrap";
+import { FaPlus, FaSearch, FaRegFileAlt } from "react-icons/fa";
+import {
+  BsGripVertical,
+  BsCaretDownFill,
+  BsThreeDotsVertical,
+} from "react-icons/bs";
+import GreenCheckmark from "./GreenCheckmark"; // import your component
+
 export default function Assignments() {
+  // Dummy assignments data
+  const assignments = [
+    {
+      id: "123",
+      title: "A1 – ENV + HTML",
+      modules: "Multiple",
+      notavailableuntil: "SEP 10, 2025 11:59PM",
+      due: "SEP 20, 2025 11:59PM",
+      points: 100,
+    },
+    {
+      id: "234",
+      title: "A2 – CSS + BOOTSTRAP",
+      modules: "Multiple",
+      notavailableuntil: "SEP 20, 2025 11:59PM",
+      due: "SEP 30, 2025 11:59PM",
+      points: 100,
+    },
+    {
+      id: "345",
+      title: "A3 – JAVASCRIPT + REACTJS",
+      modules: "Multiple",
+      notavailableuntil: "OCT 01, 2025 11:59PM",
+      due: "OCT 10, 2025 11:59PM",
+      points: 100,
+    },
+    {
+      id: "456",
+      title: "A4 – NODEJS + EXPRESSJS",
+      modules: "Multiple",
+      notavailableuntil: "OCT 12, 2025 11:59PM",
+      due: "OCT 21 , 2025 11:59PM",
+      points: 100,
+    },
+  ];
+
   return (
-    <div id="wd-assignments">
-      <input placeholder="Search for Assignments" id="wd-search-assignment" />
-      <button id="wd-add-assignment-group">+ Group</button>
-      <button id="wd-add-assignment">+ Assignment</button>
-      <h3 id="wd-assignments-title">
-        ASSIGNMENTS 40% of Total <button>+</button>{" "}
-      </h3>
-      <ul id="wd-assignment-list">
-        <li className="wd-assignment-list-item">
-          <Link
-            href="/Courses/1234/Assignments/123"
-            className="wd-assignment-link"
+    <div id="wd-assignments" className="p-3">
+      {/* ===== Top Controls ===== */}
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        {/* Search Bar */}
+        <InputGroup style={{ maxWidth: "300px" }}>
+          <InputGroup.Text>
+            <FaSearch />
+          </InputGroup.Text>
+          <Form.Control
+            placeholder="Search for Assignments"
+            id="wd-search-assignment"
+          />
+        </InputGroup>
+
+        {/* Buttons */}
+        <div className="d-flex gap-2">
+          <Button variant="secondary" id="wd-add-assignment-group">
+            <FaPlus className="me-1" />
+            Group
+          </Button>
+          <Button variant="danger" id="wd-add-assignment">
+            <FaPlus className="me-1" />
+            Assignment
+          </Button>
+        </div>
+      </div>
+
+      {/* ===== Gray Header Box (sharp corners) ===== */}
+      <div
+        className="bg-secondary bg-opacity-25 p-3 d-flex align-items-center justify-content-between mb-0"
+        style={{ borderRadius: 0 }}
+      >
+        <div className="d-flex align-items-center fw-bold fs-5">
+          <BsGripVertical className="me-2 fs-4 text-secondary" />
+          <BsCaretDownFill className="me-2 text-secondary" />
+          ASSIGNMENTS
+        </div>
+
+        <div className="d-flex align-items-center gap-3">
+          {/* 40% Badge */}
+          <span className="bg-light px-3 py-1 rounded-pill text-muted small border">
+            40% of Total
+          </span>
+
+          {/* Action Buttons */}
+          <Button
+            variant="light"
+            size="sm"
+            className="border-0 text-secondary p-1"
+            title="Add Assignment"
           >
-            A1 - ENV + HTML
-          </Link>
-        </li>
-        <ul className="wd-assignment-list-item">
-          3 MODULES | 5 QUESTIONS | DUE SEP 20, 2025 11:59PM | 100 POINTS
-        </ul>
-        <li className="wd-assignment-list-item">
-          <Link
-            href="/Courses/1234/Assignments/234"
-            className="wd-assignment-link"
+            <FaPlus />
+          </Button>
+          <Button
+            variant="light"
+            size="sm"
+            className="border-0 text-secondary p-1"
+            title="More Options"
           >
-            A2 - CSS + BOOTSTRAP
-          </Link>
-        </li>
-        <ul className="wd-assignment-list-item">
-          2 MODULES | 6 QUESTIONS | DUE SEP 30, 2025 11:59PM | 100 POINTS
-        </ul>
-        <li className="wd-assignment-list-item">
-          <Link
-            href="/Courses/1234/Assignments/345"
-            className="wd-assignment-link"
+            <BsThreeDotsVertical />
+          </Button>
+        </div>
+      </div>
+
+      {/* ===== Assignment List (no gaps) ===== */}
+      <ListGroup id="wd-assignment-list" className="mt-0">
+        {assignments.map((assignment, index) => (
+          <ListGroupItem
+            key={assignment.id}
+            className="rounded-0 p-3"
+            style={{
+              borderLeft: "5px solid green",
+              borderTop: index === 0 ? "1px solid black" : "0px",
+              borderRight: "1px solid black",
+              borderBottom: "1px solid black",
+            }}
           >
-            A3 - JAVASCRIPT + REACTJS
-          </Link>
-        </li>
-        <ul className="wd-assignment-list-item">
-          4 MODULES | 7 QUESTIONS | DUE OCT 10, 2025 11:59PM | 100 POINTS
-        </ul>
-        <li className="wd-assignment-list-item">
-          <Link
-            href="/Courses/1234/Assignments/456"
-            className="wd-assignment-link"
-          >
-            A4 - NODEJS + EXPRESSJS
-          </Link>
-        </li>
-        <ul className="wd-assignment-list-item">
-          - MODULES | - QUESTIONS | DUE - , 2025 11:59PM | 100 POINTS
-        </ul>
-      </ul>
+            <div className="d-flex align-items-center justify-content-between mb-1">
+              <div className="d-flex align-items-center">
+                <BsGripVertical className="me-2 fs-4 text-secondary" />
+                <FaRegFileAlt className="text-secondary me-2 fs-5" />
+                <Link
+                  href={`/Courses/1234/Assignments/${assignment.id}`}
+                  className="fw-bold fs-5 text-dark text-decoration-none"
+                >
+                  {assignment.title}
+                </Link>
+              </div>
+
+              {/* Green Checkmark + 3 Dots */}
+              <div className="d-flex align-items-center">
+                <GreenCheckmark />
+                <BsThreeDotsVertical className="text-secondary" />
+              </div>
+            </div>
+
+            <div className="text-muted small ps-4">
+              <span className="text-danger fw-bold">
+                {assignment.modules} Modules
+              </span>{" "}
+              | <b>Not availabe until</b> {assignment.notavailableuntil} |{" "}
+              <b>Due</b> {assignment.due} | {assignment.points} pts
+            </div>
+          </ListGroupItem>
+        ))}
+      </ListGroup>
     </div>
   );
 }
