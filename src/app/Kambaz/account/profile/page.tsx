@@ -4,11 +4,11 @@ export default function profile() {
     return (
         <div style={{ width: "300px" }}>
             <h3>Profile</h3>
-            <FormControl id="wd-full-name" className="mb-2" placeholder="username" defaultValue="John Doe"/>
-            <FormControl id="wd-password" className="mb-2" placeholder="password" defaultValue="johndoe123"/>
+            <FormControl id="wd-full-name" type="username" className="mb-2" placeholder="username" defaultValue="John Doe"/>
+            <FormControl id="wd-password" type="password" className="mb-2" placeholder="password" defaultValue="johndoe123"/>
             <FormControl id="wd-first-name" className="mb-2" placeholder="first name" defaultValue="John"/>
             <FormControl id="wd-last-name" className="mb-2" placeholder="first name" defaultValue="Doe"/>
-            <FormControl id="wd-date" className="mb-2" type="date" placeholder="mm/dd/yyyy"/>
+            <FormControl id="wd-date" className="mb-2" type="date" defaultValue="10/01/2025"/>
             <FormControl id="wd-email" className="mb-2" placeholder="john.doe@example.com"/> 
             <FormSelect className="mb-2">
                 <option value="Faculty">Faculty</option>

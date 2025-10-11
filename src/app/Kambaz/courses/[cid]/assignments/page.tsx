@@ -12,6 +12,7 @@ export default function AssignmentsPage() {
                 <FaSearch className="position-absolute" style={{left: "10px", top: "50%", transform: "translateY(-50%)", color: "#999"}} />
                 <FormControl type="text" placeholder="Search..." style={{paddingLeft: "35px"}} />
             </div>
+            <div className="ms-auto gap-2 mb-3 d-flex">
             <Button variant="secondary" size="sm" id="wd-add-group-btn" className="text-nowrap">
                 <FaPlus className="position-relative me-2" style={{ bottom: "1px" }} />
                 Group
@@ -20,6 +21,7 @@ export default function AssignmentsPage() {
                 <FaPlus className="position-relative me-2" style={{ bottom: "1px" }} />
                 Assignment
             </Button>
+            </div>
             </div>
             <ListGroup className="rounded-0" id="wd-assignments">                
                 <ListGroupItem className="wd-module p-0 mb-5 border-gray">
