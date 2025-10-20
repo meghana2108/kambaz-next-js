@@ -7,13 +7,13 @@ export default function Destructing () {
         <div id="wd-destructing">
             <h3>Destructing</h3>
             <h4>Object Destructing</h4>
-            const &#123; name, age &#125; = &#123; name : "John", age : 25 &#125; <br/>
-            name = {name}<br/>
-            age = {age} <br/> <br/>
+                const &#123; name, age &#125; = &#123; name: &quot;John&quot;, age: 25 &#125;<br />
+                name = {name}<br />
+                age = {age}<br/><br/>
             <h4>Array Destructing</h4>
-            const [first,second,third] = ["one","two", "three"]<br/> 
-            first = {first}<br/>
-            second = {second}<br/>
+            const [first, second, third] = [&quot;one&quot;, &quot;two&quot;, &quot;three&quot;]<br />
+            first = {first}<br />
+            second = {second}<br />
             third = {third}<hr/>
         </div>
     );

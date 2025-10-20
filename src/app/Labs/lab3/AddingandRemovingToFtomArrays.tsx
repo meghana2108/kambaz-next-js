@@ -1,7 +1,7 @@
 export default function AddingandRemovingToFromArrays () {
-    let numberarray = [1,2,3,4,5];
-    let stringarray = ["string 1, ", "string 2, "];
-    let todoarray = [<li key={1}>Buy milk</li>, <li key={2}>Feed the pets</li>]
+    const numberarray = [1,2,3,4,5];
+    const stringarray = ["string 1, ", "string 2, "];
+    const todoarray = [<li key={1}>Buy milk</li>, <li key={2}>Feed the pets</li>]
     numberarray.push(6);
     stringarray.push("string 3");
     numberarray.splice(1,1);
