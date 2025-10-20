@@ -7,6 +7,7 @@ import { HiOutlineInbox } from "react-icons/hi";
 import { ImLab } from "react-icons/im";
 import { ListGroupItem, ListGroup } from "react-bootstrap";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 import "./index.css";
 import Link from "next/link";
 export default function Kambaznavigation() {
@@ -24,7 +25,7 @@ export default function Kambaznavigation() {
                 className="rounded-0 position-fixed bottom-0 top-0 d-none d-md-block bg-black z-2">
             <ListGroupItem id="wd-neu-link" target="_blank" href="https://www.northeastern.edu/"
                 action className="bg-black border-0 text-center">
-                <img src="/images/neu.png" width="75px" /></ListGroupItem>
+                <Image src="/images/neu.png" width={75} height={75} alt="logo"/></ListGroupItem>
             <ListGroupItem as={Link} href="/kambaz/Account/profile" className={`text-center border-0 bg-black ${pathname.includes("Account")?"bg-white text-danger":"bg-black text-white"}`}>
                 <MdAccountCircle className={`fs-3 ${pathname.includes("Account")?"text-danger":"text-white"}`}/> <br/>
                 Account
