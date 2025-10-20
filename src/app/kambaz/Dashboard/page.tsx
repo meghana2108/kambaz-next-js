@@ -2,7 +2,6 @@
 "use client";
 import Link from "next/link";
 import * as db from "../Database"
-import Image from "next/image";
 import {Row, Col, CardImg, Card, CardBody, CardTitle, CardText, Button} from "react-bootstrap";
 export default function Dashboard() {
     const courses = db.courses;

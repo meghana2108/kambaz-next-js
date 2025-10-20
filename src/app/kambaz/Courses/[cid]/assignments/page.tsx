@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ListGroup, ListGroupItem, Button, FormCheck, FormControl, InputGroup } from "react-bootstrap";
+import { ListGroup, ListGroupItem, Button, FormControl} from "react-bootstrap";
 import { BsGripVertical } from "react-icons/bs";
 import LessonControlButtons from "../modules/LessonControlButtons";
 import { FaEllipsisV, FaPlus, FaSearch } from "react-icons/fa";

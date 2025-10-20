@@ -9,8 +9,6 @@ import { ListGroupItem, ListGroup } from "react-bootstrap";
 import { usePathname } from "next/navigation";
 import "./index.css";
 import Link from "next/link";
-import Dashboard from "./Dashboard/page";
-import path from "path";
 export default function Kambaznavigation() {
     const pathname = usePathname();
     const links = [
