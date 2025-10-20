@@ -1,5 +1,5 @@
 export default function ArrayIndexandLength () {
-    let numberarray = [1,2,3,4,5];
+    const numberarray = [1,2,3,4,5];
     const length = numberarray.length;
     const index =  numberarray.indexOf(3);
     return (

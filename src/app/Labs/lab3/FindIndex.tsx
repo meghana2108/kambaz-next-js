@@ -1,6 +1,6 @@
 export default function FindIndex () {
-    let numberarray = [1,2,3,4,5];
-    let stringarray = ["string 1", "string 2"];
+    const numberarray = [1,2,3,4,5];
+    const stringarray = ["string 1", "string 2"];
     const fourindex = numberarray.findIndex(a => a === 4);
     const secondindex = stringarray.findIndex(a => a === "string 2");
     return (

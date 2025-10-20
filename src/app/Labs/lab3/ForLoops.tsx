@@ -1,6 +1,6 @@
 export default function ForLoops() {
-    let stringarray = ["string 1, ", "string 2"];
-    let stringarray2 = [];
+    const stringarray = ["string 1, ", "string 2"];
+    const stringarray2 = [];
     for (let i=0 ; i<stringarray.length; i++) {
         const string1 = stringarray[i];
         stringarray2.push(string1.toUpperCase());

@@ -1,5 +1,5 @@
 export default function MapFunction () {
-    let numberarray = [1,2,3,4,5];
+    const numberarray = [1,2,3,4,5];
     const square = (a:number) => a*a;
     const todos = ["Buy the milk", "Feed the pets", "Walk the dog"];
     const squares = numberarray.map(square);
