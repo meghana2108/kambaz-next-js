@@ -16,7 +16,7 @@ export default function profile() {
                 <option value="Admin">Admin</option>
                 <option value="User">User</option>
             </FormSelect>
-            <Link id="wd-sign-out-btn" className="btn btn-primary w-100 mb-2"href="/kambaz/account/signin">Sign out</Link>
+            <Link id="wd-sign-out-btn" className="btn btn-primary w-100 mb-2"href="/kambaz/Account/signin">Sign out</Link>
         </div>
     );
 }

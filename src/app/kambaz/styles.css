@@ -33,3 +33,9 @@ body * {
 .wd-lesson {
     border-left: 3px solid green !important;
 }
+.text-gray {
+  color: #6c757d !important; /* Bootstrap’s neutral gray */
+}
+.bg-light-gray {
+  background-color: #f2f2f2 !important;
+}

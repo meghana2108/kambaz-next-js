@@ -6,56 +6,39 @@ import { FaCalendarAlt } from "react-icons/fa";
 import { HiOutlineInbox } from "react-icons/hi";
 import { ImLab } from "react-icons/im";
 import { ListGroupItem, ListGroup } from "react-bootstrap";
+import { usePathname } from "next/navigation";
 import "./index.css";
 import Link from "next/link";
+import Dashboard from "./Dashboard/page";
+import path from "path";
 export default function Kambaznavigation() {
+    const pathname = usePathname();
+    const links = [
+        {label: "Dashboard", path:"/kambaz/Dashboard", icon: TfiDashboard},
+        {label: "Courses", path:"/kambaz/Dashboard", icon: FaBook},
+        {label: "Calendar", path:"/kambaz/Calendar", icon: FaCalendarAlt},
+        {label: "Inbox", path:"/kambaz/Inbox", icon: HiOutlineInbox},
+        {label: "Labs", path:"/Labs", icon: ImLab},
+
+    ]
     return (
-        <ListGroup className="rounded-0 position-fixed bottom-0 top-0 d-none d-md-block bg-black z-2" style={{width:110}} id="wd-kambaz-navigation">
-            <ListGroupItem className="bg-black text-center border-0" as="a" href="https://www.northeastern.edu/" id="wd-neu-link">
-                <img src="/images/neu.png" width="75px" alt="Northeastern University" />
-            </ListGroupItem>
-            <ListGroupItem className="border-0 bg-black text-center">
-                <Link href="/kambaz/account/profile" id="wd-account-link" className="text-white text-decoration-none">
-                <MdAccountCircle className="fs-3 text-white" />
-                <br />
+            <ListGroup id="wd-kambaz-navigation" style={{width: 110}}
+                className="rounded-0 position-fixed bottom-0 top-0 d-none d-md-block bg-black z-2">
+            <ListGroupItem id="wd-neu-link" target="_blank" href="https://www.northeastern.edu/"
+                action className="bg-black border-0 text-center">
+                <img src="/images/neu.png" width="75px" /></ListGroupItem>
+            <ListGroupItem as={Link} href="/kambaz/Account/profile" className={`text-center border-0 bg-black ${pathname.includes("Account")?"bg-white text-danger":"bg-black text-white"}`}>
+                <MdAccountCircle className={`fs-3 ${pathname.includes("Account")?"text-danger":"text-white"}`}/> <br/>
                 Account
-                </Link>
             </ListGroupItem>
-            <ListGroupItem className="border-0 bg-black text-center active">
-                <Link href="/kambaz/dashboard" id="wd-dashboard-link" className="text-white text-decoration-none">
-                <TfiDashboard className="fs-3 text-danger" />
-                <br />
-                Dashboard
-                </Link>
+            {links.map((link) => (
+            <ListGroupItem key={link.path} as={Link} href={link.path}
+                className={`bg-black text-center border-0 ${pathname.includes(link.label)?"text-danger bg-white":"text-white bg-black"}`}>
+                    {link.icon({className:"fs-3 text-danger"})}
+                    <br/>
+                    {link.label}
             </ListGroupItem>
-            <ListGroupItem className="border-0 bg-black text-center ">
-                <Link href="/kambaz/courses/cs101/home" id="wd-courses-link" className="text-white text-decoration-none">
-                <FaBook className="fs-3 text-danger" />
-                <br />
-                Courses
-                </Link>
-            </ListGroupItem>
-            <ListGroupItem className="border-0 bg-black text-center ">
-                <Link href="/kambaz/calendar" id="wd-calendar-link" className="text-white text-decoration-none">
-                <FaCalendarAlt className="fs-3 text-danger" />
-                <br />
-                Calendar
-                </Link>
-            </ListGroupItem>
-            <ListGroupItem className="border-0 bg-black text-center">
-                <Link href="/kambaz/inbox" id="wd-inbox-link" className="text-white text-decoration-none">
-                <HiOutlineInbox className="fs-3 text-danger" />
-                <br />
-                Inbox
-                </Link>
-            </ListGroupItem>
-            <ListGroupItem className="border-0 bg-black text-center">
-                <Link href="/labs" id="wd-labs-link" className="text-white text-decoration-none">
-                <ImLab className="fs-3 text-danger" />
-                <br />
-                Labs
-                </Link>
-            </ListGroupItem>
+        ))}
         </ListGroup>
     );
 }
