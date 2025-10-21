@@ -3,7 +3,7 @@ import { FormLabel, Row, Col, FormControl, FormSelect, FormCheck, Button } from 
 import { useParams } from "next/navigation";
 import * as db from "../../../../Database";
 export default function Assignmenteditor() {
-    const {cid,aid } = useParams();
+    const {aid } = useParams();
     const assignment = db.assignments.find ((a)=> a._id === aid);
     if (!assignment) {
         return <div>Assignment not found</div>;
