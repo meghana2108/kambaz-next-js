@@ -1,23 +1,30 @@
+"use client";
 import { FormLabel, Row, Col, FormControl, FormSelect, FormCheck, Button } from "react-bootstrap";
-
+import { useParams } from "next/navigation";
+import * as db from "../../../../Database";
 export default function Assignmenteditor() {
+    const {cid,aid } = useParams();
+    const assignment = db.assignments.find ((a)=> a._id === aid);
+    if (!assignment) {
+        return <div>Assignment not found</div>;
+    }
     return (
         <div id="wd-assignment-editor">
            <Row className="mb-3">
                 <FormLabel>Assignment Name</FormLabel>
                 <Col style={{maxWidth:"50%"}}>
-                    <FormControl type="text" defaultValue="A1:ENV+HTML"/>
+                    <FormControl type="text" defaultValue={assignment.title}/>
                 </Col>
            </Row>
             <Row className="mb-3">
                 <Col style={{maxWidth:"50%"}}>           
-                    <FormControl type="text" as="textarea" rows={8} defaultValue="The assignment is available online Submit a link to the landing page of your Web application running on Netlify. The landing page should include the following: Your full name and section Links to each of the lab assignments Link to the Kanbas application Links to all relevant source code repositories The Kanbas application should include a link to navigate back to the landing page."/>
+                    <FormControl type="text" as="textarea" rows={8} defaultValue={assignment.description}/>
                 </Col>
             </Row>
             <Row className="mb-3" >
                   <FormLabel className="col-2 text-end">Points</FormLabel>
                 <Col className="col-8">
-                    <FormControl type="number" defaultValue="100" style={{maxWidth:"49%"}}/>
+                    <FormControl type="number" defaultValue={assignment.points} style={{maxWidth:"49%"}}/>
                 </Col>
             </Row>
             <Row className="mb-3">
@@ -68,16 +75,16 @@ export default function Assignmenteditor() {
                         <FormControl type="text" defaultValue="Everyone" className="mb-3" />
                         
                         <FormLabel><strong>Due</strong></FormLabel>
-                        <FormControl type="datetime-local" defaultValue="2024-05-13T23:59" className="mb-3"/>
+                        <FormControl type="datetime" defaultValue={assignment.dueDate} className="mb-3"/>
                         
                         <Row>
                             <Col>
                                 <FormLabel><strong>Available from</strong></FormLabel>
-                                <FormControl type="datetime-local" defaultValue="2024-05-06T12:00"/>
+                                <FormControl type="datetime" defaultValue={assignment.availableFrom}/>
                             </Col>
                             <Col>
                                 <FormLabel><strong>Until</strong></FormLabel>
-                                <FormControl type="datetime-local" defaultValue="2024-05-20T23:59"/>
+                                <FormControl type="datetime" defaultValue={assignment.availableUntil}/>
                             </Col>
                         </Row>
                     </div>
