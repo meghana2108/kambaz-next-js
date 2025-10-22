@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import {
   ListGroup,
   ListGroupItem,
@@ -14,44 +15,26 @@ import {
   BsCaretDownFill,
   BsThreeDotsVertical,
 } from "react-icons/bs";
-import GreenCheckmark from "./GreenCheckmark"; // import your component
+import GreenCheckmark from "./GreenCheckmark"; // your component
+import * as db from "../../../Database"; // adjust path if needed
+
+interface Assignment {
+  _id: string;
+  name: string;
+  course: string;
+  modules: string;
+  notavailableuntil: string;
+  due: string;
+  points: number;
+}
 
 export default function Assignments() {
-  // Dummy assignments data
-  const assignments = [
-    {
-      id: "123",
-      title: "A1 – ENV + HTML",
-      modules: "Multiple",
-      notavailableuntil: "SEP 10, 2025 11:59PM",
-      due: "SEP 20, 2025 11:59PM",
-      points: 100,
-    },
-    {
-      id: "234",
-      title: "A2 – CSS + BOOTSTRAP",
-      modules: "Multiple",
-      notavailableuntil: "SEP 20, 2025 11:59PM",
-      due: "SEP 30, 2025 11:59PM",
-      points: 100,
-    },
-    {
-      id: "345",
-      title: "A3 – JAVASCRIPT + REACTJS",
-      modules: "Multiple",
-      notavailableuntil: "OCT 01, 2025 11:59PM",
-      due: "OCT 10, 2025 11:59PM",
-      points: 100,
-    },
-    {
-      id: "456",
-      title: "A4 – NODEJS + EXPRESSJS",
-      modules: "Multiple",
-      notavailableuntil: "OCT 12, 2025 11:59PM",
-      due: "OCT 21 , 2025 11:59PM",
-      points: 100,
-    },
-  ];
+  const { cid } = useParams();
+
+  // Filter assignments for the selected course
+  const assignments: Assignment[] = db.assignments.filter(
+    (assignment) => assignment.course === cid
+  );
 
   return (
     <div id="wd-assignments" className="p-3">
@@ -93,12 +76,10 @@ export default function Assignments() {
         </div>
 
         <div className="d-flex align-items-center gap-3">
-          {/* 40% Badge */}
           <span className="bg-light px-3 py-1 rounded-pill text-muted small border">
             40% of Total
           </span>
 
-          {/* Action Buttons */}
           <Button
             variant="light"
             size="sm"
@@ -122,7 +103,7 @@ export default function Assignments() {
       <ListGroup id="wd-assignment-list" className="mt-0">
         {assignments.map((assignment, index) => (
           <ListGroupItem
-            key={assignment.id}
+            key={assignment._id}
             className="rounded-0 p-3"
             style={{
               borderLeft: "5px solid green",
@@ -136,14 +117,13 @@ export default function Assignments() {
                 <BsGripVertical className="me-2 fs-4 text-secondary" />
                 <FaRegFileAlt className="text-secondary me-2 fs-5" />
                 <Link
-                  href={`/Courses/1234/Assignments/${assignment.id}`}
+                  href={`/Courses/${cid}/Assignments/${assignment._id}`}
                   className="fw-bold fs-5 text-dark text-decoration-none"
                 >
-                  {assignment.title}
+                  {assignment.name}
                 </Link>
               </div>
 
-              {/* Green Checkmark + 3 Dots */}
               <div className="d-flex align-items-center">
                 <GreenCheckmark />
                 <BsThreeDotsVertical className="text-secondary" />
@@ -154,7 +134,7 @@ export default function Assignments() {
               <span className="text-danger fw-bold">
                 {assignment.modules} Modules
               </span>{" "}
-              | <b>Not availabe until</b> {assignment.notavailableuntil} |{" "}
+              | <b>Not available until</b> {assignment.notavailableuntil} |{" "}
               <b>Due</b> {assignment.due} | {assignment.points} pts
             </div>
           </ListGroupItem>

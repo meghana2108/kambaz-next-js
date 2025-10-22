@@ -44,7 +44,7 @@ const TabsAndCardsExample = () => {
         <Card style={{ width: "18rem" }}>
           <CardImg
             variant="top"
-            src="images/stacked.jpg"
+            src="/images/stacked.jpg"
             alt="Stacking Starship"
           />
           <CardBody>
