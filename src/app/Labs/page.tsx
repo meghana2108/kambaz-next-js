@@ -14,6 +14,9 @@ export default function Labs() {
                     <Link href="/Labs/lab3">Lab 3 : JavaScript Fundamentals</Link>
                 </li>
                 <li>
+                    <Link href="/Labs/lab4">Lab 4 : JavaScript Fundamentals</Link>
+                </li>
+                <li>
                     <Link href="/kambaz/Account/signin">Kambaz</Link>
                 </li>
             </ul>

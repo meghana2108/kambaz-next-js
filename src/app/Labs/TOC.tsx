@@ -19,6 +19,9 @@ export default function Home() {
                         <NavLink href="/Labs/lab3" as={Link}className={`nav-link ${pathname.endsWith("Lab3") ? "active" : " "}`}>Lab3</NavLink>
                     </NavItem>
                     <NavItem>
+                        <NavLink href="/Labs/lab4" as={Link}className={`nav-link ${pathname.endsWith("Lab4") ? "active" :" "}`}>Lab4</NavLink>
+                    </NavItem>
+                    <NavItem>
                         <NavLink href="/" as={Link}>Kambaz</NavLink>
                     </NavItem>
                     <NavItem>

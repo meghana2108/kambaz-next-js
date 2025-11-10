@@ -7,15 +7,23 @@ import { BsGripVertical } from "react-icons/bs";
 import LessonControlButtons from "../modules/LessonControlButtons";
 import { FaEllipsisV, FaPlus, FaSearch } from "react-icons/fa";
 import { SlBookOpen } from "react-icons/sl";
+import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/navigation";
+import { RootState } from "@/app/kambaz/store";
 import * as db from "@/app/kambaz/Database";
-
+import { deleteAssignment } from "./reducer";
 export default function AssignmentsPage() {
     const { cid } = useParams();
-    
+    const dispatch = useDispatch();
     const courseid = (cid as string).toUpperCase();
-    const assignments = db.assignments.filter(
-        (assignment: any) => assignment.course === courseid
-        );
+    const assignments = useSelector((state: RootState) =>
+    state.assignmentsReducer.filter((a: any) => a.course === courseid));
+    const router = useRouter();
+    const handleDelete = (id: string) => {
+    if (confirm("Are you sure you want to delete this assignment?")) {
+      dispatch(deleteAssignment(id));
+    }
+  };
     return (
         <div>
             <div className="d-flex align-items-center gap-2 mb-3">
@@ -28,7 +36,7 @@ export default function AssignmentsPage() {
                         <FaPlus className="position-relative me-2" style={{ bottom: "1px" }} />
                         Group
                     </Button>
-                    <Button variant="danger" size="sm" id="wd-add-assignment-btn" className="text-nowrap">
+                    <Button variant="danger" size="sm" onClick={() => router.push(`/kambaz/Courses/${cid}/assignments/new`)} id="wd-add-assignment-btn" className="text-nowrap">
                         <FaPlus className="position-relative me-2" style={{ bottom: "1px" }} />
                         Assignment
                     </Button>
@@ -50,7 +58,7 @@ export default function AssignmentsPage() {
                                 <FaEllipsisV color="#F5F5F5" />
                             </Button>
                         </div>
-                    </div>
+                    </div>  
                     
                     {assignments.map((assignment: any) => (
                         <ListGroupItem key={assignment._id} className="wd-lesson p-3 ps-6">
@@ -65,12 +73,17 @@ export default function AssignmentsPage() {
                                         {assignment.title}
                                     </Link>
                                     <LessonControlButtons/>
+                                    <Button variant="link" className="text-danger ms-2 p-0" onClick={() => {
+                                        if (confirm(`Are you sure you want to delete "${assignment.title}"?`)) {
+                                        dispatch(deleteAssignment(assignment._id));
+                                            }
+                                    }}>Delete</Button>
                                     <p className="small mb-0">
                                         <span className="text-danger">Multiple Modules </span>
-                                        | Not available until {assignment.due} at 00:00 |
+                                        | Not available until {assignment.availableFrom} at 00:00 |
                                     </p>                      
                                     <p>
-                                        Due {assignment.due} 23:59 | -/100 pts
+                                        Due {assignment.dueDate} 23:59 | -/100 pts
                                     </p>
                                 </div>
                             </div>

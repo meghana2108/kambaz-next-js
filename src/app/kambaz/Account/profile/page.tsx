@@ -1,22 +1,57 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
+import { useRouter } from "next/navigation";
+import {redirect} from "next/navigation";
+import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { setCurrentUser } from "../reducer";
+import { RootState } from "../../store";
 import Link from "next/link";
-import { FormControl, FormSelect } from "react-bootstrap";
-export default function profile() {
-    return (
-        <div style={{ width: "300px" }}>
-            <h3>Profile</h3>
-            <FormControl id="wd-full-name" type="username" className="mb-2" placeholder="username" defaultValue="John Doe"/>
-            <FormControl id="wd-password" type="password" className="mb-2" placeholder="password" defaultValue="johndoe123"/>
-            <FormControl id="wd-first-name" className="mb-2" placeholder="first name" defaultValue="John"/>
-            <FormControl id="wd-last-name" className="mb-2" placeholder="first name" defaultValue="Doe"/>
-            <FormControl id="wd-date" className="mb-2" type="date" defaultValue="10/01/2025"/>
-            <FormControl id="wd-email" className="mb-2" placeholder="john.doe@example.com"/> 
-            <FormSelect className="mb-2">
-                <option value="Faculty">Faculty</option>
-                <option value="Student">Student</option>
-                <option value="Admin">Admin</option>
-                <option value="User">User</option>
-            </FormSelect>
-            <Link id="wd-sign-out-btn" className="btn btn-primary w-100 mb-2"href="/kambaz/Account/signin">Sign out</Link>
+import { FormControl, FormSelect, Button } from "react-bootstrap";
+
+export default function Profile() {
+  const [profile, setProfile] = useState<any>({});
+  const dispatch = useDispatch();
+  const { currentUser } = useSelector((state: RootState) => state.accountReducer);
+
+  useEffect(() => {
+    if (!currentUser) {
+      redirect("/kambaz/Account/signin");
+    } else {
+      setProfile(currentUser);
+    }
+  }, [currentUser]);
+
+  const signout = () => {
+    dispatch(setCurrentUser(null));
+    redirect("/Account/signin");
+  };
+
+  return (
+    <div style={{ width: "300px" }}>
+      <h3>Profile</h3>
+
+      {profile && (
+        <div>
+          <FormControl className="mb-2" defaultValue={profile.username} />
+          <FormControl className="mb-2" type="password" defaultValue={profile.password} />
+          <FormControl className="mb-2" defaultValue={profile.firstName} />
+          <FormControl className="mb-2" defaultValue={profile.lastName} />
+          <FormControl className="mb-2" type="date" defaultValue={profile.dob} />
+          <FormControl className="mb-2" defaultValue={profile.email} />
+
+          <FormSelect className="mb-2" defaultValue={profile.role}>
+            <option value="Faculty">Faculty</option>
+            <option value="Student">Student</option>
+            <option value="Admin">Admin</option>
+            <option value="User">User</option>
+          </FormSelect>
+
+          <Button className="btn btn-primary w-100 mb-2" onClick={signout}>
+            Sign out
+          </Button>
         </div>
-    );
+      )}
+    </div>
+  );
 }
