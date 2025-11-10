@@ -10,7 +10,6 @@ import { SlBookOpen } from "react-icons/sl";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import { RootState } from "@/app/kambaz/store";
-import * as db from "@/app/kambaz/Database";
 import { deleteAssignment } from "./reducer";
 export default function AssignmentsPage() {
     const { cid } = useParams();
@@ -19,7 +18,6 @@ export default function AssignmentsPage() {
     const assignments = useSelector((state: RootState) =>
     state.assignmentsReducer.filter((a: any) => a.course === courseid));
     const router = useRouter();
-    const handleDelete = (id: string) => {
     if (confirm("Are you sure you want to delete this assignment?")) {
       dispatch(deleteAssignment(id));
     }

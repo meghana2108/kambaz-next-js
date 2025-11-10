@@ -3,11 +3,9 @@
 "use client";
 import { FormLabel, Row, Col, FormControl, FormSelect, FormCheck, Button } from "react-bootstrap";
 import { useParams } from "next/navigation";
-import * as db from "../../../../Database";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/app/kambaz/store";
 import { useRouter } from "next/navigation";
-import { title } from "process";
 import { addAssignment, updateAssignment } from "../reducer";
 export default function Assignmenteditor() {
     const {cid,aid } = useParams();

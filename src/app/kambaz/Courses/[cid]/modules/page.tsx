@@ -1,13 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { ListGroup, ListGroupItem } from "react-bootstrap"
 import { useParams } from "next/navigation";
 import { useState } from "react";
-import * as db from "../../../Database"
 import ModulesControls from "./ModulesControls"
 import { BsGripVertical } from "react-icons/bs";
 import LessonControlButtons from "./LessonControlButtons";
-import { v4 as uuidv4 } from "uuid";
 import { FormControl } from "react-bootstrap";
 import ModulesControlsButton from "./ModuleControlsButton";
 import { addModule, editModule,deleteModule, updateModule } from "./reducer";
@@ -19,15 +16,6 @@ type Lesson = {
   description: string;
   module: string;
 };
-
-type Module = {
-  _id: string;
-  name: string;
-  description: string;
-  course: string;
-  lessons?: Lesson[];
-};
-
 export default function Modules() {
   const { cid } = useParams();
     const { modules } = useSelector((state: RootState) => state.modulesReducer);

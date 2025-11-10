@@ -16,10 +16,7 @@ import { Provider, useSelector } from "react-redux";
 import store from "./store";
 import TodoList from "../lab4/ReduxExamples/todos/todoList";
 
-// ✅ This component has Redux context (so useSelector works here)
 function Lab4Content() {
-  const todoState = useSelector((state: any) => state.todo);
-
   function sayHello() {
     alert("Hello");
   }
@@ -44,8 +41,6 @@ function Lab4Content() {
     </div>
   );
 }
-
-// ✅ This component provides Redux context
 export default function Lab4() {
   return (
     <Provider store={store}>

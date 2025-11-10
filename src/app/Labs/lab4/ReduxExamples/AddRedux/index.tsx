@@ -6,7 +6,6 @@ import { add } from "./addReducer";
 export default function AddRedux () {
     const [a, seta] = useState (12);
     const [b, setb] = useState (23);
-    const sum = useSelector((state:RootState) => state.add);
     const dispatch = useDispatch();
     return (
         <div id="wd-add-redux">
