@@ -16,6 +16,15 @@ type Lesson = {
   description: string;
   module: string;
 };
+
+type Module = {
+  _id: string;
+  name: string;
+  description: string;
+  course: string;
+  lessons?: Lesson[];
+};
+
 export default function Modules() {
   const { cid } = useParams();
     const { modules } = useSelector((state: RootState) => state.modulesReducer);
@@ -43,7 +52,7 @@ export default function Modules() {
                }}
                defaultValue={module.name}/>
       )}
-              <ModulesControlsButton moduleId={module._id} deleteModule={(moduleId) => dispatch(deleteModule(moduleId))} editModule={(moduleId) => editModule(moduleId)}/>
+              <ModulesControlsButton moduleId={module._id} deleteModule={(moduleId) => dispatch(deleteModule(moduleId))} editModule={(moduleId) => dispatch(editModule(moduleId))}/>
             </div>
             {module.lessons?.length>0 && (
               <ListGroup className="wd-lessons rounded-0">

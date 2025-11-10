@@ -21,7 +21,6 @@ export default function AssignmentsPage() {
     if (confirm("Are you sure you want to delete this assignment?")) {
       dispatch(deleteAssignment(id));
     }
-  };
     return (
         <div>
             <div className="d-flex align-items-center gap-2 mb-3">
