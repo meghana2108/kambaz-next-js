@@ -20,9 +20,7 @@ export default function Assignmenteditor() {
     }
     const assignment = isNew ? 
     {title: "", description: "", points: 0, dueDate: "", availableFrom: "", availableUntil: ""} :
-    useSelector((state: RootState) => {
-        return state.assignmentsReducer.find((a:any) => a._id === aid);
-    });
+    existingAssignment!;
     return (
         <div id="wd-assignment-editor">
            <Row className="mb-3">

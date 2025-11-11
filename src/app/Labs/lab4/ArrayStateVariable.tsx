@@ -1,8 +1,5 @@
 import { useState } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "./store";
 export default function ArrayStateVariable () {
-    const {todos} = useSelector((state:RootState) => state.todo);
     const [array, setarray] = useState([1,2,3,4,5]);
     const addElement = () => {
         setarray([...array, Math.floor(Math.random()*100)]);

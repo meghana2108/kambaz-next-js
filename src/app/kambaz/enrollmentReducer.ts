@@ -1,5 +1,6 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import * as db from "./Database/index"  ;
+console.log("Enrollment reducer loading...", db.enrollments);
 interface Enrollment {
   _id: string;
   user: string;
