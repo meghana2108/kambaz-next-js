@@ -12,14 +12,17 @@ export default function Assignmenteditor() {
     const isNew = aid === "new";
     const router = useRouter();
     const dispatch = useDispatch();
+    const existingAssignment = useSelector((state: RootState) => {
+        return state.assignmentsReducer.find((a: any) => a._id === aid);
+    });
+    if (!isNew && !existingAssignment) {
+        return <div>Assignment Not Found</div>;
+    }
     const assignment = isNew ? 
     {title: "", description: "", points: 0, dueDate: "", availableFrom: "", availableUntil: ""} :
     useSelector((state: RootState) => {
         return state.assignmentsReducer.find((a:any) => a._id === aid);
     });
-    if (!assignment && !isNew) {
-        return <div>Assignment Not Found</div>
-    }
     return (
         <div id="wd-assignment-editor">
            <Row className="mb-3">
@@ -104,7 +107,7 @@ export default function Assignmenteditor() {
             </Row>
             <hr />
             <div className="float-end" >
-            <Button variant="secondary" className="me-2">Cancel</Button>
+            <Button variant="secondary" className="me-2" onClick={() => router.push(`/kambaz/Courses/${cid}/assignments`)}>Cancel</Button>
             <Button variant="danger" onClick={() => {
              if (isNew) {
             const newAssignment = {

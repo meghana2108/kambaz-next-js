@@ -18,9 +18,11 @@ export default function AssignmentsPage() {
     const assignments = useSelector((state: RootState) =>
     state.assignmentsReducer.filter((a: any) => a.course === courseid));
     const router = useRouter();
+    const handleDelete = (id: string) => {
     if (confirm("Are you sure you want to delete this assignment?")) {
       dispatch(deleteAssignment(id));
     }
+};
     return (
         <div>
             <div className="d-flex align-items-center gap-2 mb-3">
