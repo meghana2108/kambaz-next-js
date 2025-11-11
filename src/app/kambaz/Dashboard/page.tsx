@@ -14,7 +14,15 @@ export default function Dashboard() {
   const { enrollments } = useSelector((state: RootState) => state.enrollmentReducer);
   const dispatch = useDispatch();
   const [showAllCourses, setShowAllCourses] = useState(false);
-  const [course, setCourse] = useState<any>({
+  const [course, setCourse] = useState<{
+    _id: string,
+    name: string,
+    number: string,
+    startDate: string,
+    endDate: string,
+    image: string,
+    description: string
+  }>({
     _id: "0",
     name: "New Course",
     number: "New Number",

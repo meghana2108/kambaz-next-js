@@ -10,21 +10,6 @@ import ModulesControlsButton from "./ModuleControlsButton";
 import { addModule, editModule,deleteModule, updateModule } from "./reducer";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../store";
-type Lesson = {
-  _id: string;
-  name: string;
-  description: string;
-  module: string;
-};
-
-type Module = {
-  _id: string;
-  name: string;
-  description: string;
-  course: string;
-  lessons?: Lesson[];
-};
-
 export default function Modules() {
   const { cid } = useParams();
     const { modules } = useSelector((state: RootState) => state.modulesReducer);

@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 export default function EventObject() {
-    const [event, setEvent] = useState<Record<string, any> | null>(null);
+    const [event, setEvent] = useState<Record<string, unknown> | null>(null);
     const handleClick = (e : React.MouseEvent<HTMLButtonElement>) => {
        const eventCopy = {
             ...e,

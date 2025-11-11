@@ -12,7 +12,7 @@ import ObjectStateVariables from "./ObjectStateVariables";
 import ArrayStateVariable from "./ArrayStateVariable";
 import ParentStateComponents from "./ParentStateComponent";
 import ReduxExamples from "./ReduxExamples";
-import { Provider, useSelector } from "react-redux";
+import { Provider } from "react-redux";
 import store from "./store";
 import TodoList from "../lab4/ReduxExamples/todos/todoList";
 

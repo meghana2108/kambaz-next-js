@@ -1,6 +1,5 @@
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import {useState} from "react";
-import { RootState } from"../../store";
 import { FormControl } from "react-bootstrap";
 import { add } from "./addReducer";
 export default function AddRedux () {
