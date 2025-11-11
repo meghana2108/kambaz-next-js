@@ -17,8 +17,6 @@ export default function CoursesLayout({ children }: { children: ReactNode }) {
     const course = courses.find((course) => course._id === cid);
     const [sidebarVisible, setSidebarVisible] = useState(true);
     const toggleSidebar = () => setSidebarVisible(!sidebarVisible);
-
-    // Route protection
     useEffect(() => {
         if (!currentUser) {
             router.push("/kambaz/Dashboard");
