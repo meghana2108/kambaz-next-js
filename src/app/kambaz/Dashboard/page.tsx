@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addNewCourse, deleteCourse, updateCourse } from "../Courses/reducer";
+import { addNewCourse, deleteCourse, updateCourse, Course } from "../Courses/reducer";
 import { enrollInCourse, unenrollFromCourse } from "../enrollmentReducer";
 import { RootState } from "../store";
 import Link from "next/link";
@@ -13,15 +13,7 @@ export default function Dashboard() {
   const { enrollments } = useSelector((state: RootState) => state.enrollmentReducer);
   const dispatch = useDispatch();
   const [showAllCourses, setShowAllCourses] = useState(false);
-  const [course, setCourse] = useState<{
-    _id: string,
-    name: string,
-    number: string,
-    startDate: string,
-    endDate: string,
-    image: string,
-    description: string
-  }>({
+  const [course, setCourse] = useState<Course>({
     _id: "0",
     name: "New Course",
     number: "New Number",
@@ -29,6 +21,8 @@ export default function Dashboard() {
     endDate: "2023-12-15",
     image: "/images/react.png",
     description: "New Description",
+    department: "New Department",
+    credits: 3,
   });
 
   const isFaculty = currentUser?.role === "FACULTY";
