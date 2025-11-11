@@ -4,9 +4,21 @@ import Link from "next/link";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { setCurrentUser } from "../reducer";
-import { redirect } from "next/dist/client/components/navigation";
+import { redirect } from "next/navigation";
 import { Form, Button } from "react-bootstrap";
 import { v4 as uuidv4 } from "uuid";
+
+// ✅ Define a User interface for type safety
+interface User {
+  _id: string;
+  username: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: string;
+  dob: string;
+}
 
 export default function Signup() {
   const dispatch = useDispatch();
@@ -18,13 +30,31 @@ export default function Signup() {
   });
 
   const signup = () => {
-    if (!credentials.username || !credentials.password) return;
+    if (!credentials.username || !credentials.password) {
+      alert("Please fill all fields!");
+      return;
+    }
     if (credentials.password !== credentials.verifyPassword) {
       alert("Passwords do not match!");
       return;
     }
 
-    const newUser = {
+    // ✅ Load existing users safely
+    const stored = localStorage.getItem("users");
+    const users: User[] = stored ? JSON.parse(stored) : [];
+
+    // ✅ Check for duplicates with proper typing
+    const usernameExists = users.some(
+      (u: User) => u.username === credentials.username
+    );
+
+    if (usernameExists) {
+      alert("Username already exists!");
+      return;
+    }
+
+    // ✅ Create a new user object
+    const newUser: User = {
       _id: uuidv4(),
       username: credentials.username,
       password: credentials.password,
@@ -35,7 +65,14 @@ export default function Signup() {
       dob: "2000-01-01",
     };
 
+    // ✅ Save to localStorage
+    const updatedUsers: User[] = [...users, newUser];
+    localStorage.setItem("users", JSON.stringify(updatedUsers));
+
+    // ✅ Update Redux store
     dispatch(setCurrentUser(newUser));
+
+    // ✅ Redirect to profile
     redirect("/Account/Profile");
   };
 

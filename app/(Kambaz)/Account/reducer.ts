@@ -15,17 +15,33 @@ export interface AccountState {
   currentUser: User | null;
 }
 
+// ✅ Load from localStorage if available
+const getStoredUser = (): User | null => {
+  if (typeof window === "undefined") return null;
+  const stored = localStorage.getItem("currentUser");
+  return stored ? JSON.parse(stored) : null;
+};
+
 const initialState: AccountState = {
-  currentUser: null,
+  currentUser: getStoredUser(),
 };
 
 const accountSlice = createSlice({
   name: "account",
   initialState,
   reducers: {
-    // ✅ Sets the currently signed-in user
+    // ✅ Sets or clears the currently signed-in user
     setCurrentUser: (state, action: PayloadAction<User | null>) => {
       state.currentUser = action.payload;
+
+      // ✅ Persist to localStorage
+      if (typeof window !== "undefined") {
+        if (action.payload) {
+          localStorage.setItem("currentUser", JSON.stringify(action.payload));
+        } else {
+          localStorage.removeItem("currentUser");
+        }
+      }
     },
   },
 });

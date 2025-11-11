@@ -47,14 +47,6 @@ export default function ArrayStateVariable() {
 
       <hr />
 
-      {/* ✅ Redux Todos Section */}
-      <h4>Todos from Redux Store</h4>
-      <ListGroup>
-        {todos.map((todo) => (
-          <ListGroupItem key={todo.id}>{todo.title}</ListGroupItem>
-        ))}
-      </ListGroup>
-
       <hr />
     </div>
   );
