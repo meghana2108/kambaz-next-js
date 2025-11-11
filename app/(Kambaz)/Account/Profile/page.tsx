@@ -1,90 +1,128 @@
 "use client";
-import Link from "next/link";
-import { Form } from "react-bootstrap";
+
+import { redirect } from "next/dist/client/components/navigation";
+import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { setCurrentUser } from "../reducer";
+import { RootState } from "../../store";
+import { Button, FormControl } from "react-bootstrap";
+
+/** ✅ Strong, flexible type for user data */
+interface UserProfile {
+  _id?: string;
+  username?: string;
+  password?: string;
+  firstName?: string;
+  lastName?: string;
+  dob?: string;
+  email?: string;
+  // Allow both known roles and any string (to match database)
+  role?: "USER" | "ADMIN" | "FACULTY" | "STUDENT" | string;
+}
 
 export default function Profile() {
+  const dispatch = useDispatch();
+  const { currentUser } = useSelector(
+    (state: RootState) => state.accountReducer
+  );
+
+  // ✅ Local editable copy of current user's data
+  const [profile, setProfile] = useState<UserProfile>({});
+
+  // ✅ Load profile from Redux when available
+  useEffect(() => {
+    if (!currentUser) {
+      redirect("/Account/Signin");
+    } else {
+      setProfile(currentUser);
+    }
+  }, [currentUser]);
+
+  // ✅ Sign out function
+  const signout = () => {
+    dispatch(setCurrentUser(null));
+    redirect("/Account/Signin");
+  };
+
   return (
-    <div
-      id="wd-profile-screen"
-      className="d-flex justify-content-center align-items-center vh-100 bg-light"
-    >
-      <div
-        className="border rounded p-4 shadow-sm bg-white"
-        style={{ width: "400px" }}
-      >
-        <h3 className="text-center text-black mb-4">Profile</h3>
+    <div className="wd-profile-screen p-4">
+      <h3>Profile</h3>
 
-        <Form>
-          {/* Username */}
-          <Form.Group className="mb-3" controlId="wd-username">
-            <Form.Control
-              type="text"
-              placeholder="Username"
-              defaultValue="alice"
-            />
-          </Form.Group>
+      {profile && (
+        <div>
+          <FormControl
+            id="wd-username"
+            className="mb-2"
+            defaultValue={profile.username}
+            onChange={(e) =>
+              setProfile({ ...profile, username: e.target.value })
+            }
+          />
+          <FormControl
+            id="wd-password"
+            className="mb-2"
+            defaultValue={profile.password}
+            onChange={(e) =>
+              setProfile({ ...profile, password: e.target.value })
+            }
+          />
+          <FormControl
+            id="wd-firstname"
+            className="mb-2"
+            defaultValue={profile.firstName}
+            onChange={(e) =>
+              setProfile({ ...profile, firstName: e.target.value })
+            }
+          />
+          <FormControl
+            id="wd-lastname"
+            className="mb-2"
+            defaultValue={profile.lastName}
+            onChange={(e) =>
+              setProfile({ ...profile, lastName: e.target.value })
+            }
+          />
+          <FormControl
+            id="wd-dob"
+            className="mb-2"
+            type="date"
+            defaultValue={profile.dob}
+            onChange={(e) => setProfile({ ...profile, dob: e.target.value })}
+          />
+          <FormControl
+            id="wd-email"
+            className="mb-2"
+            defaultValue={profile.email}
+            onChange={(e) => setProfile({ ...profile, email: e.target.value })}
+          />
 
-          {/* Password */}
-          <Form.Group className="mb-3" controlId="wd-password">
-            <Form.Control
-              type="password"
-              placeholder="Password"
-              defaultValue="123"
-            />
-          </Form.Group>
+          <select
+            className="form-control mb-2"
+            id="wd-role"
+            defaultValue={profile.role}
+            onChange={(e) =>
+              setProfile({
+                ...profile,
+                role: e.target.value as UserProfile["role"],
+              })
+            }
+          >
+            <option value="USER">User</option>
+            <option value="ADMIN">Admin</option>
+            <option value="FACULTY">Faculty</option>
+            <option value="STUDENT">Student</option>
+          </select>
 
-          {/* First Name */}
-          <Form.Group className="mb-3" controlId="wd-firstname">
-            <Form.Control
-              type="text"
-              placeholder="First Name"
-              defaultValue="Alice"
-            />
-          </Form.Group>
-
-          {/* Last Name */}
-          <Form.Group className="mb-3" controlId="wd-lastname">
-            <Form.Control
-              type="text"
-              placeholder="Last Name"
-              defaultValue="Wonderland"
-            />
-          </Form.Group>
-
-          {/* Date of Birth */}
-          <Form.Group className="mb-3" controlId="wd-dob">
-            <Form.Control type="date" defaultValue="2000-01-01" />
-          </Form.Group>
-
-          {/* Email */}
-          <Form.Group className="mb-3" controlId="wd-email">
-            <Form.Control
-              type="email"
-              placeholder="Email"
-              defaultValue="alice@wonderland"
-            />
-          </Form.Group>
-
-          {/* Role */}
-          <Form.Group className="mb-3" controlId="wd-role">
-            <Form.Select defaultValue="FACULTY">
-              <option value="USER">User</option>
-              <option value="ADMIN">Admin</option>
-              <option value="FACULTY">Faculty</option>
-              <option value="STUDENT">Student</option>
-            </Form.Select>
-          </Form.Group>
-
-          {/* Sign out */}
-          <Link
-            href="/Account/Signin"
-            id="wd-signout-link"
-            className="btn btn-danger w-100 mt-2"
+          <Button
+            onClick={signout}
+            className="w-100 mb-2"
+            id="wd-signout-btn"
+            variant="danger"
           >
             Sign out
-          </Link>
-        </Form>
-      </div>
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

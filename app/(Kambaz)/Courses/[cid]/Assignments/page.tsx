@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import {
   ListGroup,
   ListGroupItem,
@@ -15,9 +15,20 @@ import {
   BsCaretDownFill,
   BsThreeDotsVertical,
 } from "react-icons/bs";
-import GreenCheckmark from "./GreenCheckmark"; // your component
-import * as db from "../../../Database"; // adjust path if needed
+import GreenCheckmark from "./GreenCheckmark";
 
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../../store";
+
+// ⚠️ If you put the reducer at app/(Kambaz)/Courses/Assignments/reducer.ts,
+// this relative import is correct from [cid]/Assignments/page.tsx:
+import {
+  addAssignment,
+  deleteAssignment,
+  updateAssignment,
+} from "../Assignments/reducer";
+
+// ---------------- Types ----------------
 interface Assignment {
   _id: string;
   name: string;
@@ -28,13 +39,38 @@ interface Assignment {
   points: number;
 }
 
+// -------------- Component --------------
 export default function Assignments() {
-  const { cid } = useParams();
+  const { cid } = useParams<{ cid: string }>();
+  const router = useRouter();
+  const dispatch = useDispatch();
 
-  // Filter assignments for the selected course
-  const assignments: Assignment[] = db.assignments.filter(
-    (assignment) => assignment.course === cid
-  );
+  // Get assignments from Redux
+  const { assignments } = useSelector(
+    (state: RootState) => state.assignmentReducer
+  ) as { assignments: Assignment[] };
+
+  // Filter by the current course
+  const courseAssignments = assignments.filter((a) => a.course === cid);
+
+  // Handlers
+  const handleAdd = () => {
+    // Provide sensible defaults; you can wire this to an editor later
+    dispatch(
+      addAssignment({
+        name: "New Assignment",
+        course: cid,
+        modules: "1",
+        notavailableuntil: "2025-01-01",
+        due: "2025-01-10",
+        points: 100,
+      })
+    );
+  };
+
+  const handleDelete = (id: string) => {
+    dispatch(deleteAssignment(id));
+  };
 
   return (
     <div id="wd-assignments" className="p-3">
@@ -57,7 +93,7 @@ export default function Assignments() {
             <FaPlus className="me-1" />
             Group
           </Button>
-          <Button variant="danger" id="wd-add-assignment">
+          <Button variant="danger" id="wd-add-assignment" onClick={handleAdd}>
             <FaPlus className="me-1" />
             Assignment
           </Button>
@@ -85,6 +121,7 @@ export default function Assignments() {
             size="sm"
             className="border-0 text-secondary p-1"
             title="Add Assignment"
+            onClick={handleAdd}
           >
             <FaPlus />
           </Button>
@@ -101,7 +138,7 @@ export default function Assignments() {
 
       {/* ===== Assignment List (no gaps) ===== */}
       <ListGroup id="wd-assignment-list" className="mt-0">
-        {assignments.map((assignment, index) => (
+        {courseAssignments.map((assignment, index) => (
           <ListGroupItem
             key={assignment._id}
             className="rounded-0 p-3"
@@ -124,8 +161,15 @@ export default function Assignments() {
                 </Link>
               </div>
 
-              <div className="d-flex align-items-center">
+              <div className="d-flex align-items-center gap-2">
                 <GreenCheckmark />
+                <Button
+                  variant="outline-danger"
+                  size="sm"
+                  onClick={() => handleDelete(assignment._id)}
+                >
+                  Delete
+                </Button>
                 <BsThreeDotsVertical className="text-secondary" />
               </div>
             </div>
@@ -140,6 +184,10 @@ export default function Assignments() {
           </ListGroupItem>
         ))}
       </ListGroup>
+
+      {courseAssignments.length === 0 && (
+        <p className="text-muted mt-3">No assignments yet.</p>
+      )}
     </div>
   );
 }

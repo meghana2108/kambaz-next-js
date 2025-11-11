@@ -1,37 +1,34 @@
-import { ReactNode } from "react";
-import { FaAlignJustify } from "react-icons/fa";
+"use client";
+
+import { ReactNode, useState } from "react";
 import CourseNavigation from "./Navigation";
-import { courses } from "../../Database";
 import Breadcrumb from "./Breadcrumb";
+import { useSelector } from "react-redux";
+import { useParams } from "next/navigation";
+import { RootState } from "../../store";
 
-type LayoutPropsForCourse = {
-  children: ReactNode;
-  params: Promise<{ cid: string }>;
-};
-
-export default async function CoursesLayout({
-  children,
-  params,
-}: LayoutPropsForCourse) {
-  const { cid } = await params;
-
-  const course = courses.find((course) => course._id === cid);
+export default function CoursesLayout({ children }: { children: ReactNode }) {
+  const { cid } = useParams<{ cid: string }>();
+  const { courses } = useSelector((state: RootState) => state.coursesReducer);
+  const course = courses.find((c) => c._id === cid);
+  const [showNav, setShowNav] = useState(true);
 
   return (
     <div id="wd-courses" className="container-fluid">
-      {/* ✅ Breadcrumb should be right here */}
-      <Breadcrumb course={course} />
+      {/* ✅ Breadcrumb now controls toggle */}
+      <Breadcrumb course={course} onToggle={() => setShowNav(!showNav)} />
       <hr />
 
-      {/* Layout structure */}
+      {/* ✅ Layout structure */}
       <div className="d-flex">
-        <div
-          className="d-none d-md-block border-end p-3"
-          style={{ width: "200px" }}
-        >
-          <CourseNavigation cid={cid} />
-        </div>
-
+        {showNav && (
+          <div
+            className="border-end p-3 d-none d-md-block"
+            style={{ width: "200px" }}
+          >
+            <CourseNavigation cid={cid as string} />
+          </div>
+        )}
         <div className="flex-fill p-3">{children}</div>
       </div>
     </div>

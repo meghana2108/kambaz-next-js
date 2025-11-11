@@ -1,45 +1,48 @@
 "use client";
 
+import { useState } from "react";
 import { useParams } from "next/navigation";
-import { ListGroup, ListGroupItem } from "react-bootstrap";
+import { useSelector, useDispatch } from "react-redux";
+import { ListGroup, ListGroupItem, FormControl } from "react-bootstrap";
 import { BsGripVertical } from "react-icons/bs";
-import { modules } from "../../../Database"; // relative path to index.ts
+
+import {
+  addModule,
+  deleteModule,
+  editModule,
+  updateModule,
+  Module, // ✅ import the Module type
+} from "./reducer";
+import { RootState } from "../../../store";
 import ModulesControls from "./ModulesControls";
 import LessonControlButtons from "./LessonControlButtons";
 import ModuleControlButtons from "./ModuleControlButtons";
 
-interface Lesson {
-  _id: string;
-  name: string;
-}
-
-interface Module {
-  _id: string;
-  name: string;
-  course: string;
-  lessons: Lesson[];
-}
-
 export default function Modules() {
-  const { cid } = useParams();
-  const courseModules: Module[] = modules.filter(
-    (module: Module) => module.course === cid
-  );
+  const { cid } = useParams<{ cid: string }>();
+  const [moduleName, setModuleName] = useState("");
+
+  // ✅ Properly typed Redux state & dispatch
+  const { modules } = useSelector((state: RootState) => state.modulesReducer);
+  const dispatch = useDispatch();
 
   return (
-    <div>
-      <ModulesControls />
-      <br />
-      <br />
-      <br />
+    <div className="wd-modules">
+      {/* ✅ Top Controls */}
+      <ModulesControls
+        moduleName={moduleName}
+        setModuleName={setModuleName}
+        addModule={() => {
+          dispatch(addModule({ name: moduleName, course: cid as string }));
+          setModuleName("");
+        }}
+      />
 
-      {courseModules.length === 0 ? (
-        <div className="p-3 text-center">
-          No modules available for this course yet.
-        </div>
-      ) : (
-        <ListGroup id="wd-modules" className="rounded-0">
-          {courseModules.map((module: Module) => (
+      {/* ✅ Modules List */}
+      <ListGroup id="wd-modules" className="rounded-0 mt-3">
+        {modules
+          .filter((module: Module) => module.course === cid)
+          .map((module: Module) => (
             <ListGroupItem
               className="wd-module p-0 mb-5 fs-5 border-gray"
               key={module._id}
@@ -47,14 +50,39 @@ export default function Modules() {
               <div className="wd-title p-3 ps-2 bg-secondary d-flex align-items-center justify-content-between">
                 <div className="d-flex align-items-center">
                   <BsGripVertical className="me-2 fs-3" />
-                  {module.name}
+
+                  {/* 🧠 Editable Name */}
+                  {!module.editing && module.name}
+                  {module.editing && (
+                    <FormControl
+                      className="w-50 d-inline-block"
+                      defaultValue={module.name}
+                      onChange={(e) =>
+                        dispatch(
+                          updateModule({ ...module, name: e.target.value })
+                        )
+                      }
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          dispatch(updateModule({ ...module, editing: false }));
+                        }
+                      }}
+                    />
+                  )}
                 </div>
-                <ModuleControlButtons />
+
+                {/* ✅ Control Buttons */}
+                <ModuleControlButtons
+                  moduleId={module._id}
+                  deleteModule={(moduleId) => dispatch(deleteModule(moduleId))}
+                  editModule={(moduleId) => dispatch(editModule(moduleId))}
+                />
               </div>
 
-              {module.lessons && (
+              {/* Lessons */}
+              {module.lessons && module.lessons.length > 0 && (
                 <ListGroup className="wd-lessons rounded-0">
-                  {module.lessons.map((lesson: Lesson) => (
+                  {module.lessons.map((lesson) => (
                     <ListGroupItem
                       className="wd-lesson p-3 ps-1 d-flex align-items-center justify-content-between"
                       key={lesson._id}
@@ -70,8 +98,7 @@ export default function Modules() {
               )}
             </ListGroupItem>
           ))}
-        </ListGroup>
-      )}
+      </ListGroup>
     </div>
   );
 }
