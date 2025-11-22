@@ -1,28 +1,34 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import * as client from "../client"
+import type { User } from "../client";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import {  useDispatch } from "react-redux";
 import { setCurrentUser } from "../reducer";
-import { RootState } from "../../store";
 import { FormControl, FormSelect, Button } from "react-bootstrap";
+import axios from "axios";
 
 export default function Profile() {
-  const [profile, setProfile] = useState<any>({});
+  const [profile, setProfile] = useState<User>({
+    username: "",
+    password: "",
+  });
   const dispatch = useDispatch();
   const router = useRouter();
-  const { currentUser } = useSelector((state: RootState) => state.accountReducer);
-
   const fetchProfile = async () => {
     try {
       const userProfile = await client.profile();
       setProfile(userProfile);
       dispatch(setCurrentUser(userProfile));
-    } catch (error: any) {
-      console.error('Failed to fetch profile:', error);
-      if (error.response?.status === 401) {
-        router.push("/kambaz/Account/signin");
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error("Fetch error:", error.response?.data);
+
+        if (error.response?.status === 401) {
+          router.push("/kambaz/Account/signin");
+        }
+      } else {
+        console.error("Unknown error:", error);
       }
     }
   };

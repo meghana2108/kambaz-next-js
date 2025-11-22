@@ -1,21 +1,32 @@
 "use client";
-import { ListGroup, ListGroupItem } from "react-bootstrap"
+import { ListGroup, ListGroupItem, FormControl } from "react-bootstrap";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
-import ModulesControls from "./ModulesControls"
+import ModulesControls from "./ModulesControls";
 import { BsGripVertical } from "react-icons/bs";
 import LessonControlButtons from "./LessonControlButtons";
-import { FormControl } from "react-bootstrap";
 import ModulesControlsButton from "./ModuleControlsButton";
 import { editModule, updateModule, setModule } from "./reducer";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../../../store";
 import * as client from "../../client";
 
+interface Lesson {
+  _id: string;
+  name: string;
+}
+
+interface Module {
+  _id: string;
+  name: string;
+  course: string;
+  editing?: boolean;
+  lessons?: Lesson[];
+}
+
 export default function Modules() {
   const { cid } = useParams();
-  const courseId = (Array.isArray(cid) ? cid[0] : cid) as string;
-  const { modules } = useSelector((state: RootState) => state.modulesReducer);
+  const modules = useSelector((state: RootState) => state.modulesReducer as Module[]);
   const { currentUser } = useSelector((state: RootState) => state.accountReducer);  
   const [moduleName, setModuleName] = useState("");
   const dispatch = useDispatch();
@@ -26,13 +37,14 @@ export default function Modules() {
     const modules = await client.findModulesForCourse(cid as string);
     dispatch(setModule(modules));
   };
-  useEffect (() => {
-    fetchModules();
-  },[]);
 
-   const onCreateModuleForCourse = async () => {
+  useEffect(() => {
+    fetchModules();
+  }, []);
+
+  const onCreateModuleForCourse = async () => {
     if (!cid) return;
-    const newModule = { name: moduleName, course: cid };
+    const newModule: Omit<Module, "_id"> = { name: moduleName, course: cid };
     try {
       const module = await client.createModuleForCourse(cid, newModule);
       dispatch(setModule([...modules, module]));
@@ -42,19 +54,19 @@ export default function Modules() {
     }
   };
 
-   const onRemoveModule = async (moduleId: string) => {
+  const onRemoveModule = async (moduleId: string) => {
     try {
       await client.deleteModule(moduleId);
-      dispatch(setModule(modules.filter((m: any) => m._id !== moduleId)));
+      dispatch(setModule(modules.filter((m) => m._id !== moduleId)));
     } catch (error: any) {
       alert(error.response?.data?.message || "Failed to delete module");
     }
   };
 
-  const onUpdateModule = async (module: any) => {
+  const onUpdateModule = async (module: Module) => {
     try {
       await client.updateModule(module);
-      const newModules = modules.map((m: any) => m._id === module._id ? module : m);
+      const newModules = modules.map((m) => (m._id === module._id ? module : m));
       dispatch(setModule(newModules));
     } catch (error: any) {
       alert(error.response?.data?.message || "Failed to update module");
@@ -93,11 +105,12 @@ export default function Modules() {
               {isFaculty && (
                 <ModulesControlsButton 
                   moduleId={module._id} 
-                  deleteModule={(moduleId) => onRemoveModule(moduleId)} 
+                  deleteModule={onRemoveModule} 
                   editModule={(moduleId) => dispatch(editModule(moduleId))}
                 />
               )}
             </div>
+
             {module.lessons?.length > 0 && (
               <ListGroup className="wd-lessons rounded-0">
                 {module.lessons.map((lesson) => (

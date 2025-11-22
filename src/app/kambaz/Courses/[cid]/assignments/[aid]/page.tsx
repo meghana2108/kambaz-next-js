@@ -1,5 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { FormLabel, Row, Col, FormControl, FormSelect, FormCheck, Button } from "react-bootstrap";
 import { useParams } from "next/navigation";
@@ -18,9 +16,8 @@ export default function Assignmenteditor() {
     const { currentUser } = useSelector((state: RootState) => state.accountReducer);
     const isFaculty = currentUser?.role === "FACULTY" || currentUser?.role === "ADMIN";
     
-    const existingAssignment = useSelector((state: RootState) => {
-        return state.assignmentsReducer.find((a: any) => a._id === aid);
-    });
+    const existingAssignment = useSelector((state: RootState) =>
+    state.assignmentsReducer.find(a => a._id === aid));
     
     const [formData, setFormData] = useState({
         title: "",

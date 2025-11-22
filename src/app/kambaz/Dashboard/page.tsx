@@ -8,10 +8,15 @@ import * as client from "../Courses/client";
 import Link from "next/link";
 import { Row, Col, CardImg, Card, CardBody, CardTitle, CardText, Button, FormControl } from "react-bootstrap";
 
+interface Enrollment {
+  user: string;
+  course: string;
+}
+
 export default function Dashboard() {
   const { courses } = useSelector((state: RootState) => state.coursesReducer);
   const { currentUser } = useSelector((state: RootState) => state.accountReducer);
-  const { enrollments } = useSelector((state: RootState) => state.enrollmentReducer);
+  const { enrollments } = useSelector((state: RootState) => state.enrollmentReducer) as { enrollments: Enrollment[] };
   const dispatch = useDispatch();
   const [showAllCourses, setShowAllCourses] = useState(false);
   

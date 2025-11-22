@@ -1,29 +1,39 @@
 "use client";
 import Link from "next/link";
+import type { User } from "../client";
 import { useRouter } from "next/navigation";
 import { setCurrentUser } from "../reducer";
 import { useDispatch } from "react-redux";
 import { useState } from "react";
 import { FormControl, FormSelect, Button } from "react-bootstrap";
 import * as client from "../client";
+import axios from "axios";
 
 export default function Signup() {
-  const [user, setUser] = useState<any>({});
+   const [user, setUser] = useState<User>({
+    username: "",
+    password: "",
+  });
   const [error, setError] = useState("");
   const dispatch = useDispatch();
   const router = useRouter();
   
   const signup = async () => {
     try {
-      console.log('Signing up with:', user);
       const currentUser = await client.signup(user);
       dispatch(setCurrentUser(currentUser));
       router.push("/kambaz/Dashboard");
-    } catch (error: any) {
-      console.error('Signup error:', error);
-      setError(error.response?.data?.message || "Signup failed. Please try again.");
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error("Signup error:", error.response?.data);
+        setError(error.response?.data?.message || "Signup failed. Please try again.");
+      } else {
+        console.error("Unknown signup error:", error);
+        setError("Signup failed. Please try again.");
+      }
     }
   };
+
   
   return (
     <div className="wd-signup-screen" style={{ width: "300px" }}>

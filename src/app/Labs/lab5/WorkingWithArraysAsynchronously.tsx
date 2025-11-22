@@ -5,8 +5,16 @@ import { FormControl, ListGroup, ListGroupItem } from "react-bootstrap";
 import { FaPencil, FaTrash } from "react-icons/fa6";
 import { FaPlusCircle } from "react-icons/fa";
 import { TiDelete } from "react-icons/ti";
+
+interface Todo {
+  id: number;
+  title: string;
+  completed: boolean;
+  userId?: number;
+  description?: string;
+}
 export default function WorkingWithArraysAsynchronously() {
-    const [todos, setTodos] = useState<any>([]);
+    const [todos, setTodos] = useState<Todo[]>([]);
     const [errormessage, setErrorMessage] = useState(null);
     const fetchTodos = async () => {
         const todos = await client.fetchTodos();
@@ -15,7 +23,7 @@ export default function WorkingWithArraysAsynchronously() {
     useEffect(() => {
         fetchTodos();
     }, []);
-    const removeTodo = async (todo: any) => {
+    const removeTodo = async (todo: Todo) => {
         const updatedTodos = await client.removeTodo(todo);
         setTodos(updatedTodos);
     };
@@ -31,7 +39,7 @@ export default function WorkingWithArraysAsynchronously() {
         });
         setTodos(updatedTodos); 
     };
-    const deleteTodo = async (todo: any) => {
+    const deleteTodo = async (todo: Todo) => {
         try {
         await client.deleteTodo(todo);
         const newTodos = todos.filter((t) => t.id !== todo.id);
@@ -41,12 +49,12 @@ export default function WorkingWithArraysAsynchronously() {
             setErrorMessage(error.response.data.message);
         }
     };
-    const editTodo = (todo: any) => {
+    const editTodo = (todo: Todo) => {
         const updatedTodos = todos.map(
         (t) => t.id === todo.id ? { ...todo, editing: true } : t );
         setTodos(updatedTodos);
     };
-    const updateTodo = async (todo: any) => {
+    const updateTodo = async (todo: Todo) => {
         try {
         await client.updateTodo(todo);
         setTodos(todos.map((t) => (t.id === todo.id ? todo : t)));
@@ -71,7 +79,7 @@ export default function WorkingWithArraysAsynchronously() {
                 />
             </h4>
             <ListGroup>
-                {todos.map((todo: any) => (
+                {todos.map((todo: Todo) => (
                     <ListGroupItem key={todo.id}>
                         <FaTrash
                             onClick={() => removeTodo(todo)}
