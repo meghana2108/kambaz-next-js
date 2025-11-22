@@ -1,20 +1,8 @@
 import axios from "axios";
+import type { Course } from "./reducer";
 
 const HTTP_SERVER = process.env.NEXT_PUBLIC_HTTP_SERVER;
 const axiosWithCredentials = axios.create({ withCredentials: true });
-
-export interface Course {
-  _id?: string;
-  name: string;
-  number?: string;
-  startDate?: string;
-  endDate?: string;
-  image?: string;
-  description?: string;
-  department?: string;
-  credits?: number;
-  author?: string;
-}
 
 export interface Module {
   _id?: string;

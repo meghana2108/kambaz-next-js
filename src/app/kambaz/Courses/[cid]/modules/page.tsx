@@ -45,9 +45,9 @@ useEffect(() => {
 
  const onCreateModuleForCourse = async () => {
   if (!cid) return;
-  const newModule: Omit<Module, "_id"> = { name: moduleName, course: cid };
+  const newModule: Omit<Module, "_id"> = { name: moduleName, course: cid as string };
   try {
-    const createdModule = await client.createModuleForCourse(cid, newModule);
+    const createdModule = await client.createModuleForCourse(cid as string, newModule);
     dispatch(setModule([...modules, createdModule]));  
     setModuleName("");
   } catch (error: unknown) {  

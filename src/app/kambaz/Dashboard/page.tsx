@@ -175,95 +175,95 @@ export default function Dashboard() {
       <div id="wd-dashboard-courses">
         <Row xs={1} md={5} className="g-4">
           {currentUser &&
-            coursesToDisplay.map((course) => {
-              const enrolled = isEnrolled(course._id);
-              return (
-                <Col key={course._id} className="wd-dashboard-course-1" style={{ width: 300 }}>
-                  <Card>
-                    <Link
-                      href={`/kambaz/Courses/${course._id}/home`}
-                      className="wd-dashboard-course-link text-decoration-none text-dark"
-                      onClick={(e) => {
-                        if (!enrolled && !isFaculty) {
-                          e.preventDefault();
-                          alert("Please enroll in this course to access it");
-                        }
-                      }}
-                    >
-                      <CardImg variant="top" src={course.image} width="100%" height={160} />
-                      <CardBody>
-                        <CardTitle className="wd-dashboard-course-title text-nowrap overflow-hidden">
-                          {course.name}
-                        </CardTitle>
+            coursesToDisplay.map((courseItem) => {
+  const enrolled = isEnrolled(courseItem._id);
+  return (
+    <Col key={courseItem._id} className="wd-dashboard-course-1" style={{ width: 300 }}>
+      <Card>
+        <Link
+          href={`/kambaz/Courses/${courseItem._id}/home`}
+          className="wd-dashboard-course-link text-decoration-none text-dark"
+          onClick={(e) => {
+            if (!enrolled && !isFaculty) {
+              e.preventDefault();
+              alert("Please enroll in this course to access it");
+            }
+          }}
+        >
+          <CardImg variant="top" src={courseItem.image} width="100%" height={160} />
+          <CardBody>
+            <CardTitle className="wd-dashboard-course-title text-nowrap overflow-hidden">
+              {courseItem.name}
+            </CardTitle>
 
-                        <CardText
-                          className="wd-dashboard-course-description overflow-hidden"
-                          style={{ height: "100px" }}
-                        >
-                          {course.description}
-                        </CardText>
+            <CardText
+              className="wd-dashboard-course-description overflow-hidden"
+              style={{ height: "100px" }}
+            >
+              {courseItem.description}
+            </CardText>
 
-                        {(enrolled || isFaculty) && <Button variant="primary">Go</Button>}
+            {(enrolled || isFaculty) && <Button variant="primary">Go</Button>}
 
-                        {isFaculty && (
-                          <>
-                            <Button
-                              className="btn btn-danger float-end me-2"
-                              onClick={(event) => {
-                                event.preventDefault();
-                                if (confirm(`Are you sure you want to delete "${course.name}"?`)) {
-                                  onDeleteCourse(course._id);
-                                }
-                              }}
-                            >
-                              Delete
-                            </Button>
+            {isFaculty && (
+              <>
+                <Button
+                  className="btn btn-danger float-end me-2"
+                  onClick={(event) => {
+                    event.preventDefault();
+                    if (confirm(`Are you sure you want to delete "${courseItem.name}"?`)) {
+                      onDeleteCourse(courseItem._id);
+                    }
+                  }}
+                >
+                  Delete
+                </Button>
 
-                            <Button
-                              className="btn btn-warning me-2 float-end"
-                              onClick={(event) => {
-                                event.preventDefault();
-                                setCourse(course);
-                              }}
-                            >
-                              Edit
-                            </Button>
-                          </>
-                        )}
+                <Button
+                  className="btn btn-warning me-2 float-end"
+                  onClick={(event) => {
+                    event.preventDefault();
+                    setCourse(courseItem);
+                  }}
+                >
+                  Edit
+                </Button>
+              </>
+            )}
 
-                        {!isFaculty && (
-                          <>
-                            {enrolled ? (
-                              <Button
-                                variant="danger"
-                                className="float-end"
-                                onClick={(event) => {
-                                  event.preventDefault();
-                                  handleUnenroll(course._id);
-                                }}
-                              >
-                                Unenroll
-                              </Button>
-                            ) : (
-                              <Button
-                                variant="success"
-                                className="float-end"
-                                onClick={(event) => {
-                                  event.preventDefault();
-                                  handleEnroll(course._id);
-                                }}
-                              >
-                                Enroll
-                              </Button>
-                            )}
-                          </>
-                        )}
-                      </CardBody>
-                    </Link>
-                  </Card>
-                </Col>
-              );
-            })}
+            {!isFaculty && (
+              <>
+                {enrolled ? (
+                  <Button
+                    variant="danger"
+                    className="float-end"
+                    onClick={(event) => {
+                      event.preventDefault();
+                      handleUnenroll(courseItem._id);
+                    }}
+                  >
+                    Unenroll
+                  </Button>
+                ) : (
+                  <Button
+                    variant="success"
+                    className="float-end"
+                    onClick={(event) => {
+                      event.preventDefault();
+                      handleEnroll(courseItem._id);
+                    }}
+                  >
+                    Enroll
+                  </Button>
+                )}
+              </>
+            )}
+          </CardBody>
+        </Link>
+      </Card>
+    </Col>
+  );
+})}
         </Row>
       </div>
     </div>
