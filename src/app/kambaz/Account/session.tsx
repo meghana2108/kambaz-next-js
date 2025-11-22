@@ -1,5 +1,5 @@
 import * as client from "./client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";  
 import { setCurrentUser } from "./reducer";
 import { useDispatch } from "react-redux";
 import axios from "axios";
@@ -9,7 +9,7 @@ export default function Session({ children }: { children: ReactNode }) {
   const [pending, setPending] = useState(true);
   const dispatch = useDispatch();
 
-  const fetchProfile = async () => {
+  const fetchProfile = useCallback(async () => { 
     try {
       const currentUser = await client.profile();
       dispatch(setCurrentUser(currentUser));
@@ -21,11 +21,11 @@ export default function Session({ children }: { children: ReactNode }) {
       }
     }
     setPending(false);
-  };
+  }, [dispatch]);  
 
   useEffect(() => {
     fetchProfile();
-  }, []);
+  }, [fetchProfile]); 
 
   if (!pending) {
     return <>{children}</>;

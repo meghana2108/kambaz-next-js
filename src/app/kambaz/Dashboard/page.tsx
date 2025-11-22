@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setCourses, Course } from "../Courses/reducer";
 import { enrollInCourse, unenrollFromCourse } from "../enrollmentReducer";
@@ -32,18 +32,18 @@ export default function Dashboard() {
     credits: 3,
   });
 
-  const fetchCourses = async () => {
-    try {
-      const courses = await client.fetchAllCourses();
-      dispatch(setCourses(courses));
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const fetchCourses = useCallback(async () => {
+  try {
+    const courses = await client.fetchAllCourses();
+    dispatch(setCourses(courses));
+  } catch (error) {
+    console.error(error);
+  }
+}, [dispatch]);
 
-  useEffect(() => {
-    fetchCourses();
-  }, [currentUser]);
+useEffect(() => {
+  fetchCourses();
+}, [fetchCourses, currentUser]);
 
   const onAddNewCourse = async () => {
     try {
@@ -60,27 +60,29 @@ export default function Dashboard() {
         department: "New Department",
         credits: 3,
       });
-    } catch (error: any) {
-      alert(error.response?.data?.message || "Failed to create course");
-    }
+    }  catch (error: unknown) {  
+  const err = error as { response?: { data?: { message?: string } } };
+  alert(err.response?.data?.message || "Failed to create course");
+}
   };
 
   const onDeleteCourse = async (courseId: string) => {
     try {
       await client.deleteCourse(courseId);
       dispatch(setCourses(courses.filter((course) => course._id !== courseId)));
-    } catch (error: any) {
-      alert(error.response?.data?.message || "Failed to delete course");
-    }
-  };
+    } catch (error: unknown) {  
+  const err = error as { response?: { data?: { message?: string } } };
+  alert(err.response?.data?.message || "Failed to delete course");
+}
 
   const onUpdateCourse = async () => {
     try {
       await client.updateCourse(course);
       dispatch(setCourses(courses.map((c) => (c._id === course._id ? course : c))));
-    } catch (error: any) {
-      alert(error.response?.data?.message || "Failed to update course");
-    }
+    } catch (error: unknown) { 
+  const err = error as { response?: { data?: { message?: string } } };
+  alert(err.response?.data?.message || "Failed to update course");
+}
   };
 
   const isFaculty = currentUser?.role === "FACULTY" || currentUser?.role === "ADMIN";
@@ -97,10 +99,10 @@ export default function Dashboard() {
       try {
         await client.enrollInCourse(courseId);
         dispatch(enrollInCourse({ userId: currentUser._id, courseId }));
-      } catch (error: any) {
-        alert(error.response?.data?.message || "Failed to enroll");
-      }
-    }
+      } catch (error: unknown) { 
+  const err = error as { response?: { data?: { message?: string } } };
+  alert(err.response?.data?.message || "Failed to enroll");
+} 
   };
 
   const handleUnenroll = async (courseId: string) => {
@@ -108,10 +110,10 @@ export default function Dashboard() {
       try {
         await client.unenrollFromCourse(courseId);
         dispatch(unenrollFromCourse({ userId: currentUser._id, courseId }));
-      } catch (error: any) {
-        alert(error.response?.data?.message || "Failed to unenroll");
-      }
-    }
+      } catch (error: unknown) {  
+  const err = error as { response?: { data?: { message?: string } } };
+  alert(err.response?.data?.message || "Failed to unenroll");
+}
   };
 
   const coursesToDisplay = showAllCourses
@@ -263,4 +265,5 @@ export default function Dashboard() {
       </div>
     </div>
   );
+}
 }

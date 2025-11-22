@@ -13,6 +13,8 @@ interface Todo {
   userId?: number;
   description?: string;
 }
+
+
 export default function WorkingWithArraysAsynchronously() {
     const [todos, setTodos] = useState<Todo[]>([]);
     const [errormessage, setErrorMessage] = useState(null);
@@ -44,9 +46,13 @@ export default function WorkingWithArraysAsynchronously() {
         await client.deleteTodo(todo);
         const newTodos = todos.filter((t) => t.id !== todo.id);
         setTodos(newTodos);
-        } catch (error:any) {
+        } catch (error: unknown) {  // FIXED LINE 47: Changed from 'any' to 'unknown'
             console.log(error);
-            setErrorMessage(error.response.data.message);
+            // Type guard to safely access error properties
+            if (error && typeof error === 'object' && 'response' in error) {
+                const err = error as { response: { data: { message: string } } };
+                setErrorMessage(err.response.data.message);
+            }
         }
     };
     const editTodo = (todo: Todo) => {
@@ -58,8 +64,11 @@ export default function WorkingWithArraysAsynchronously() {
         try {
         await client.updateTodo(todo);
         setTodos(todos.map((t) => (t.id === todo.id ? todo : t)));
-        } catch (error:any) {
-            setErrorMessage(error.response.data.message);
+        } catch (error: unknown) {  
+            if (error && typeof error === 'object' && 'response' in error) {
+                const err = error as { response: { data: { message: string } } };
+                setErrorMessage(err.response.data.message);
+            }
         }
     };
     return (

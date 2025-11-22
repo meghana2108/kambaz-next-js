@@ -1,7 +1,7 @@
 "use client";
 import { ListGroup, ListGroupItem, FormControl } from "react-bootstrap";
 import { useParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import ModulesControls from "./ModulesControls";
 import { BsGripVertical } from "react-icons/bs";
 import LessonControlButtons from "./LessonControlButtons";
@@ -19,6 +19,7 @@ interface Lesson {
 interface Module {
   _id: string;
   name: string;
+  description?: string; 
   course: string;
   editing?: boolean;
   lessons?: Lesson[];
@@ -26,41 +27,43 @@ interface Module {
 
 export default function Modules() {
   const { cid } = useParams();
-  const modules = useSelector((state: RootState) => state.modulesReducer as Module[]);
+  const modules = useSelector((state: RootState) => state.modulesReducer.modules);
   const { currentUser } = useSelector((state: RootState) => state.accountReducer);  
   const [moduleName, setModuleName] = useState("");
   const dispatch = useDispatch();
   
   const isFaculty = currentUser?.role === "FACULTY" || currentUser?.role === "ADMIN";
 
-  const fetchModules = async () => {
-    const modules = await client.findModulesForCourse(cid as string);
-    dispatch(setModule(modules));
-  };
+  const fetchModules = useCallback(async () => {
+  const modules = await client.findModulesForCourse(cid as string);
+  dispatch(setModule(modules));
+}, [cid, dispatch]);
 
-  useEffect(() => {
-    fetchModules();
-  }, []);
+useEffect(() => {
+  fetchModules();
+}, [fetchModules]);
 
-  const onCreateModuleForCourse = async () => {
-    if (!cid) return;
-    const newModule: Omit<Module, "_id"> = { name: moduleName, course: cid };
-    try {
-      const module = await client.createModuleForCourse(cid, newModule);
-      dispatch(setModule([...modules, module]));
-      setModuleName("");
-    } catch (error: any) {
-      alert(error.response?.data?.message || "Failed to create module");
-    }
-  };
+ const onCreateModuleForCourse = async () => {
+  if (!cid) return;
+  const newModule: Omit<Module, "_id"> = { name: moduleName, course: cid };
+  try {
+    const createdModule = await client.createModuleForCourse(cid, newModule);
+    dispatch(setModule([...modules, createdModule]));  
+    setModuleName("");
+  } catch (error: unknown) {  
+    const err = error as { response?: { data?: { message?: string } } };
+    alert(err.response?.data?.message || "Failed to create module");
+  }
+};
 
   const onRemoveModule = async (moduleId: string) => {
     try {
       await client.deleteModule(moduleId);
       dispatch(setModule(modules.filter((m) => m._id !== moduleId)));
-    } catch (error: any) {
-      alert(error.response?.data?.message || "Failed to delete module");
-    }
+    } catch (error: unknown) { 
+  const err = error as { response?: { data?: { message?: string } } };
+  alert(err.response?.data?.message || "Failed to delete module");
+}
   };
 
   const onUpdateModule = async (module: Module) => {
@@ -68,9 +71,10 @@ export default function Modules() {
       await client.updateModule(module);
       const newModules = modules.map((m) => (m._id === module._id ? module : m));
       dispatch(setModule(newModules));
-    } catch (error: any) {
-      alert(error.response?.data?.message || "Failed to update module");
-    }
+    } catch (error: unknown) {  
+  const err = error as { response?: { data?: { message?: string } } };
+  alert(err.response?.data?.message || "Failed to update module");
+}
   };
 
   return (
@@ -111,16 +115,16 @@ export default function Modules() {
               )}
             </div>
 
-            {module.lessons?.length > 0 && (
-              <ListGroup className="wd-lessons rounded-0">
-                {module.lessons.map((lesson) => (
-                  <ListGroupItem key={lesson._id} className="wd-lesson p-3 ps-1">
-                    <BsGripVertical className="me-2 fs-3" /> {lesson.name}
-                    {isFaculty && <LessonControlButtons />}
-                  </ListGroupItem>
-                ))}
-              </ListGroup>
-            )}
+           {module.lessons && module.lessons.length > 0 && ( 
+            <ListGroup className="wd-lessons rounded-0">
+            {module.lessons.map((lesson) => (
+              <ListGroupItem key={lesson._id} className="wd-lesson p-3 ps-1">
+                <BsGripVertical className="me-2 fs-3" /> {lesson.name}
+                {isFaculty && <LessonControlButtons />}
+              </ListGroupItem>
+            ))}
+            </ListGroup>
+           )}
           </ListGroupItem>
         ))}
       </ListGroup>
