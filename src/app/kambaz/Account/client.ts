@@ -31,7 +31,7 @@ export const updateUser = async (user: User) => {
 };
 
 export const profile = async () => {
-  const response = await axiosWithCredentials.post(`${USERS_API}/profile`);
+  const response = await axiosWithCredentials.get(`${USERS_API}/profile`);
   return response.data;
 };
 
