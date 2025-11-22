@@ -33,17 +33,17 @@ export default function Dashboard() {
   });
 
   const fetchCourses = useCallback(async () => {
-  try {
-    const courses = await client.fetchAllCourses();
-    dispatch(setCourses(courses));
-  } catch (error) {
-    console.error(error);
-  }
-}, [dispatch]);
+    try {
+      const courses = await client.fetchAllCourses();
+      dispatch(setCourses(courses));
+    } catch (error) {
+      console.error(error);
+    }
+  }, [dispatch]);
 
-useEffect(() => {
-  fetchCourses();
-}, [fetchCourses, currentUser]);
+  useEffect(() => {
+    fetchCourses();
+  }, [fetchCourses, currentUser]);
 
   const onAddNewCourse = async () => {
     try {
@@ -60,29 +60,30 @@ useEffect(() => {
         department: "New Department",
         credits: 3,
       });
-    }  catch (error: unknown) {  
-  const err = error as { response?: { data?: { message?: string } } };
-  alert(err.response?.data?.message || "Failed to create course");
-}
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      alert(err.response?.data?.message || "Failed to create course");
+    }
   };
 
   const onDeleteCourse = async (courseId: string) => {
     try {
       await client.deleteCourse(courseId);
       dispatch(setCourses(courses.filter((course) => course._id !== courseId)));
-    } catch (error: unknown) {  
-  const err = error as { response?: { data?: { message?: string } } };
-  alert(err.response?.data?.message || "Failed to delete course");
-}
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      alert(err.response?.data?.message || "Failed to delete course");
+    }
+  };
 
   const onUpdateCourse = async () => {
     try {
       await client.updateCourse(course);
       dispatch(setCourses(courses.map((c) => (c._id === course._id ? course : c))));
-    } catch (error: unknown) { 
-  const err = error as { response?: { data?: { message?: string } } };
-  alert(err.response?.data?.message || "Failed to update course");
-}
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      alert(err.response?.data?.message || "Failed to update course");
+    }
   };
 
   const isFaculty = currentUser?.role === "FACULTY" || currentUser?.role === "ADMIN";
@@ -99,10 +100,11 @@ useEffect(() => {
       try {
         await client.enrollInCourse(courseId);
         dispatch(enrollInCourse({ userId: currentUser._id, courseId }));
-      } catch (error: unknown) { 
-  const err = error as { response?: { data?: { message?: string } } };
-  alert(err.response?.data?.message || "Failed to enroll");
-} 
+      } catch (error: unknown) {
+        const err = error as { response?: { data?: { message?: string } } };
+        alert(err.response?.data?.message || "Failed to enroll");
+      }
+    }
   };
 
   const handleUnenroll = async (courseId: string) => {
@@ -110,29 +112,30 @@ useEffect(() => {
       try {
         await client.unenrollFromCourse(courseId);
         dispatch(unenrollFromCourse({ userId: currentUser._id, courseId }));
-      } catch (error: unknown) {  
-  const err = error as { response?: { data?: { message?: string } } };
-  alert(err.response?.data?.message || "Failed to unenroll");
-}
+      } catch (error: unknown) {
+        const err = error as { response?: { data?: { message?: string } } };
+        alert(err.response?.data?.message || "Failed to unenroll");
+      }
+    }
   };
 
   const coursesToDisplay = showAllCourses
     ? courses
-    : courses.filter((course) => isEnrolled(course._id) || isFaculty);  
+    : courses.filter((course) => isEnrolled(course._id) || isFaculty);
 
   return (
     <div id="wd-dashboard">
-       <div className="d-flex justify-content-between align-items-center mb-3">
-    <h1 id="wd-dashboard-title">Dashboard</h1>
-    <Button
-    variant="primary"
-    onClick={() => setShowAllCourses(!showAllCourses)}
-    >
-    {showAllCourses ? "Show My Courses" : "Enrollments"}
-    </Button>
-    </div>
-    <hr/>
-    
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h1 id="wd-dashboard-title">Dashboard</h1>
+        <Button
+          variant="primary"
+          onClick={() => setShowAllCourses(!showAllCourses)}
+        >
+          {showAllCourses ? "Show My Courses" : "Enrollments"}
+        </Button>
+      </div>
+      <hr />
+
       {isFaculty && (
         <>
           <h5 className="mb-0">
@@ -168,7 +171,7 @@ useEffect(() => {
           <hr />
         </>
       )}
-   
+
       <div id="wd-dashboard-courses">
         <Row xs={1} md={5} className="g-4">
           {currentUser &&
@@ -265,5 +268,4 @@ useEffect(() => {
       </div>
     </div>
   );
-}
 }
