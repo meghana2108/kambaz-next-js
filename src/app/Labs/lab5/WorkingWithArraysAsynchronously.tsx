@@ -12,6 +12,7 @@ interface Todo {
   completed: boolean;
   userId?: number;
   description?: string;
+  editing?: boolean;
 }
 
 
