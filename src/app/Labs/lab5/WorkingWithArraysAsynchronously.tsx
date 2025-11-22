@@ -7,7 +7,7 @@ import { FaPlusCircle } from "react-icons/fa";
 import { TiDelete } from "react-icons/ti";
 
 interface Todo {
-  id: number;
+  id: string;
   title: string;
   completed: boolean;
   userId?: number;
@@ -17,7 +17,7 @@ interface Todo {
 
 export default function WorkingWithArraysAsynchronously() {
     const [todos, setTodos] = useState<Todo[]>([]);
-    const [errormessage, setErrorMessage] = useState(null);
+    const [errormessage, setErrorMessage] = useState<string | null>(null);    
     const fetchTodos = async () => {
         const todos = await client.fetchTodos();
         setTodos(todos);
@@ -46,9 +46,8 @@ export default function WorkingWithArraysAsynchronously() {
         await client.deleteTodo(todo);
         const newTodos = todos.filter((t) => t.id !== todo.id);
         setTodos(newTodos);
-        } catch (error: unknown) {  // FIXED LINE 47: Changed from 'any' to 'unknown'
+        } catch (error: unknown) {  
             console.log(error);
-            // Type guard to safely access error properties
             if (error && typeof error === 'object' && 'response' in error) {
                 const err = error as { response: { data: { message: string } } };
                 setErrorMessage(err.response.data.message);

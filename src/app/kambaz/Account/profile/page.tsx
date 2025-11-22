@@ -2,7 +2,7 @@
 import * as client from "../client"
 import type { User } from "../client";
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";  
 import {  useDispatch } from "react-redux";
 import { setCurrentUser } from "../reducer";
 import { FormControl, FormSelect, Button } from "react-bootstrap";
@@ -15,7 +15,8 @@ export default function Profile() {
   });
   const dispatch = useDispatch();
   const router = useRouter();
-  const fetchProfile = async () => {
+  
+  const fetchProfile = useCallback(async () => { 
     try {
       const userProfile = await client.profile();
       setProfile(userProfile);
@@ -31,11 +32,11 @@ export default function Profile() {
         console.error("Unknown error:", error);
       }
     }
-  };
+  }, [dispatch, router]); 
 
   useEffect(() => {
     fetchProfile();
-  }, []);
+  }, [fetchProfile]);  
 
   const signout = async () => {
     await client.signout();
