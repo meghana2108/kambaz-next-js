@@ -72,23 +72,26 @@ export default function Assignmenteditor() {
         return <div className="alert alert-danger">Access Denied: Only faculty can edit assignments</div>;
     }
     
-    const handleSave = () => {
-        if (isNew) {
-            const newAssignment = {
-                _id: crypto.randomUUID(),
-                ...formData,
-                course: cid,
-            };
-            dispatch(addAssignment(newAssignment));
-        } else {
-            dispatch(updateAssignment({
-                ...existingAssignment,
-                ...formData,
-            }));
-        }
-        router.push(`/kambaz/Courses/${cid}/assignments`);
-    };
+  const handleSave = () => {
+    if (!cid) return;
     
+    if (isNew) {
+        const newAssignment = {
+            _id: crypto.randomUUID(),
+            ...formData,
+            course: cid as string,
+        };
+        dispatch(addAssignment(newAssignment));
+    } else {
+        if (!existingAssignment) return; 
+        dispatch(updateAssignment({
+            ...existingAssignment,
+            ...formData,
+        }));
+    }
+    router.push(`/kambaz/Courses/${cid}/assignments`);
+};
+
     return (
         <div id="wd-assignment-editor">
             <Row className="mb-3">
