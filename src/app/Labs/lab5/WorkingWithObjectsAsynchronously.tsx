@@ -8,6 +8,8 @@ interface Assignment {
   description?: string;
   points?: number;
   dueDate?: string;
+  due?: string;        
+  completed?: boolean; 
 }
 export default function WorkingWithObjectsAsynchronously () {
     const [assignment, setAssignment] = useState<Assignment>({
