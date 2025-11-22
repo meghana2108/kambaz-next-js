@@ -1,9 +1,10 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addNewCourse, deleteCourse, updateCourse, Course } from "../Courses/reducer";
+import { setCourses, Course } from "../Courses/reducer";
 import { enrollInCourse, unenrollFromCourse } from "../enrollmentReducer";
 import { RootState } from "../store";
+import * as client from "../Courses/client";
 import Link from "next/link";
 import { Row, Col, CardImg, Card, CardBody, CardTitle, CardText, Button, FormControl } from "react-bootstrap";
 
@@ -13,6 +14,7 @@ export default function Dashboard() {
   const { enrollments } = useSelector((state: RootState) => state.enrollmentReducer);
   const dispatch = useDispatch();
   const [showAllCourses, setShowAllCourses] = useState(false);
+  
   const [course, setCourse] = useState<Course>({
     _id: "0",
     name: "New Course",
@@ -25,7 +27,58 @@ export default function Dashboard() {
     credits: 3,
   });
 
-  const isFaculty = currentUser?.role === "FACULTY";
+  const fetchCourses = async () => {
+    try {
+      const courses = await client.fetchAllCourses();
+      dispatch(setCourses(courses));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCourses();
+  }, [currentUser]);
+
+  const onAddNewCourse = async () => {
+    try {
+      const newCourse = await client.createCourse(course);
+      dispatch(setCourses([...courses, newCourse]));
+      setCourse({
+        _id: "0",
+        name: "New Course",
+        number: "New Number",
+        startDate: "2023-09-10",
+        endDate: "2023-12-15",
+        image: "/images/react.png",
+        description: "New Description",
+        department: "New Department",
+        credits: 3,
+      });
+    } catch (error: any) {
+      alert(error.response?.data?.message || "Failed to create course");
+    }
+  };
+
+  const onDeleteCourse = async (courseId: string) => {
+    try {
+      await client.deleteCourse(courseId);
+      dispatch(setCourses(courses.filter((course) => course._id !== courseId)));
+    } catch (error: any) {
+      alert(error.response?.data?.message || "Failed to delete course");
+    }
+  };
+
+  const onUpdateCourse = async () => {
+    try {
+      await client.updateCourse(course);
+      dispatch(setCourses(courses.map((c) => (c._id === course._id ? course : c))));
+    } catch (error: any) {
+      alert(error.response?.data?.message || "Failed to update course");
+    }
+  };
+
+  const isFaculty = currentUser?.role === "FACULTY" || currentUser?.role === "ADMIN";
 
   const isEnrolled = (courseId: string) => {
     if (!currentUser) return false;
@@ -34,36 +87,45 @@ export default function Dashboard() {
     );
   };
 
-  const handleEnroll = (courseId: string) => {
+  const handleEnroll = async (courseId: string) => {
     if (currentUser) {
-      dispatch(enrollInCourse({ userId: currentUser._id, courseId }));
+      try {
+        await client.enrollInCourse(courseId);
+        dispatch(enrollInCourse({ userId: currentUser._id, courseId }));
+      } catch (error: any) {
+        alert(error.response?.data?.message || "Failed to enroll");
+      }
     }
   };
 
-  const handleUnenroll = (courseId: string) => {
+  const handleUnenroll = async (courseId: string) => {
     if (currentUser) {
-      dispatch(unenrollFromCourse({ userId: currentUser._id, courseId }));
+      try {
+        await client.unenrollFromCourse(courseId);
+        dispatch(unenrollFromCourse({ userId: currentUser._id, courseId }));
+      } catch (error: any) {
+        alert(error.response?.data?.message || "Failed to unenroll");
+      }
     }
   };
 
   const coursesToDisplay = showAllCourses
     ? courses
-    : courses.filter((course) => isEnrolled(course._id));
+    : courses.filter((course) => isEnrolled(course._id) || isFaculty);  
 
   return (
     <div id="wd-dashboard">
-    <div className="d-flex justify-content-between align-items-center mb-3">
-      <h1 id="wd-dashboard-title">Dashboard</h1>
-      
-      <Button
-        variant="primary"
-        onClick={() => setShowAllCourses(!showAllCourses)}
-      >
-        {showAllCourses ? "Show My Courses" : "Enrollments"}
-      </Button>
-      </div>
-      <hr />
-
+       <div className="d-flex justify-content-between align-items-center mb-3">
+    <h1 id="wd-dashboard-title">Dashboard</h1>
+    <Button
+    variant="primary"
+    onClick={() => setShowAllCourses(!showAllCourses)}
+    >
+    {showAllCourses ? "Show My Courses" : "Enrollments"}
+    </Button>
+    </div>
+    <hr/>
+    
       {isFaculty && (
         <>
           <h5 className="mb-0">
@@ -71,14 +133,14 @@ export default function Dashboard() {
             <button
               className="btn btn-primary float-end ms-2"
               id="wd-add-new-course-click"
-              onClick={() => dispatch(addNewCourse(course))}
+              onClick={onAddNewCourse}
             >
               Add
             </button>
             <button
               className="btn btn-warning float-end me-2 ms-2"
               id="wd-edit-course-click"
-              onClick={() => dispatch(updateCourse(course))}
+              onClick={onUpdateCourse}
             >
               Update
             </button>
@@ -87,22 +149,19 @@ export default function Dashboard() {
             value={course.name}
             className="mb-2"
             onChange={(e) => setCourse({ ...course, name: e.target.value })}
+            placeholder="Course Name"
           />
           <FormControl
             as="textarea"
             value={course.description}
             rows={3}
             onChange={(e) => setCourse({ ...course, description: e.target.value })}
+            placeholder="Course Description"
           />
           <hr />
         </>
       )}
-
-      <h2 id="wd-dashboard-published">
-        {showAllCourses ? "All Courses" : "Published Courses"} ({coursesToDisplay.length})
-      </h2>
-      <hr />
-
+   
       <div id="wd-dashboard-courses">
         <Row xs={1} md={5} className="g-4">
           {currentUser &&
@@ -117,6 +176,7 @@ export default function Dashboard() {
                       onClick={(e) => {
                         if (!enrolled && !isFaculty) {
                           e.preventDefault();
+                          alert("Please enroll in this course to access it");
                         }
                       }}
                     >
@@ -141,7 +201,9 @@ export default function Dashboard() {
                               className="btn btn-danger float-end me-2"
                               onClick={(event) => {
                                 event.preventDefault();
-                                dispatch(deleteCourse(course._id));
+                                if (confirm(`Are you sure you want to delete "${course.name}"?`)) {
+                                  onDeleteCourse(course._id);
+                                }
                               }}
                             >
                               Delete

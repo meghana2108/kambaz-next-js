@@ -6,44 +6,140 @@ import { useParams } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/app/kambaz/store";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { addAssignment, updateAssignment } from "../reducer";
+
 export default function Assignmenteditor() {
-    const {cid,aid } = useParams();
+    const { cid, aid } = useParams();
     const isNew = aid === "new";
     const router = useRouter();
     const dispatch = useDispatch();
+    
+    const { currentUser } = useSelector((state: RootState) => state.accountReducer);
+    const isFaculty = currentUser?.role === "FACULTY" || currentUser?.role === "ADMIN";
+    
     const existingAssignment = useSelector((state: RootState) => {
         return state.assignmentsReducer.find((a: any) => a._id === aid);
     });
+    
+    const [formData, setFormData] = useState({
+        title: "",
+        description: "",
+        points: 100,
+        assignmentGroup: "ASSIGNMENTS",
+        displayGradeAs: "Percentage",
+        submissionType: "Online",
+        dueDate: "",
+        availableFrom: "",
+        availableUntil: "",
+        textEntry: false,
+        websiteUrl: true,
+        mediaRecordings: false,
+        studentAnnotation: false,
+        fileUploads: false,
+    });
+    
+    useEffect(() => {
+        if (!isNew && existingAssignment) {
+            setFormData({
+                title: existingAssignment.title || "",
+                description: existingAssignment.description || "",
+                points: existingAssignment.points || 100,
+                assignmentGroup: existingAssignment.assignmentGroup || "ASSIGNMENTS",
+                displayGradeAs: existingAssignment.displayGradeAs || "Percentage",
+                submissionType: existingAssignment.submissionType || "Online",
+                dueDate: existingAssignment.dueDate || "",
+                availableFrom: existingAssignment.availableFrom || "",
+                availableUntil: existingAssignment.availableUntil || "",
+                textEntry: existingAssignment.textEntry || false,
+                websiteUrl: existingAssignment.websiteUrl !== undefined ? existingAssignment.websiteUrl : true,
+                mediaRecordings: existingAssignment.mediaRecordings || false,
+                studentAnnotation: existingAssignment.studentAnnotation || false,
+                fileUploads: existingAssignment.fileUploads || false,
+            });
+        }
+    }, [isNew, existingAssignment]);
+    
+    useEffect(() => {
+        if (currentUser && !isFaculty) {
+            alert("Only faculty can create or edit assignments");
+            router.push(`/kambaz/Courses/${cid}/assignments`);
+        }
+    }, [currentUser, isFaculty, router, cid]);
+    
     if (!isNew && !existingAssignment) {
         return <div>Assignment Not Found</div>;
     }
-    const assignment = isNew ? 
-    {title: "", description: "", points: 0, dueDate: "", availableFrom: "", availableUntil: ""} :
-    existingAssignment!;
+    
+    if (!isFaculty) {
+        return <div className="alert alert-danger">Access Denied: Only faculty can edit assignments</div>;
+    }
+    
+    const handleSave = () => {
+        if (isNew) {
+            const newAssignment = {
+                _id: crypto.randomUUID(),
+                ...formData,
+                course: cid,
+            };
+            dispatch(addAssignment(newAssignment));
+        } else {
+            dispatch(updateAssignment({
+                ...existingAssignment,
+                ...formData,
+            }));
+        }
+        router.push(`/kambaz/Courses/${cid}/assignments`);
+    };
+    
     return (
         <div id="wd-assignment-editor">
-           <Row className="mb-3">
+            <Row className="mb-3">
                 <FormLabel>Assignment Name</FormLabel>
                 <Col style={{maxWidth:"50%"}}>
-                    <FormControl type="text" id="assignment-title" defaultValue={assignment.title}/>
+                    <FormControl 
+                        type="text" 
+                        id="assignment-title" 
+                        value={formData.title}
+                        onChange={(e) => setFormData({...formData, title: e.target.value})}
+                    />
                 </Col>
-           </Row>
+            </Row>
+            
             <Row className="mb-3">
                 <Col style={{maxWidth:"50%"}}>           
-                    <FormControl type="text" as="textarea" id="assignment-description" rows={8} defaultValue={assignment.description}/>
+                    <FormControl 
+                        type="text" 
+                        as="textarea" 
+                        id="assignment-description" 
+                        rows={8} 
+                        value={formData.description}
+                        onChange={(e) => setFormData({...formData, description: e.target.value})}
+                    />
                 </Col>
             </Row>
-            <Row className="mb-3" >
-                  <FormLabel className="col-2 text-end">Points</FormLabel>
-                <Col className="col-8">
-                    <FormControl type="number" id="assignment-points" defaultValue={assignment.points} style={{maxWidth:"49%"}}/>
-                </Col>
-            </Row>
+            
             <Row className="mb-3">
-               <FormLabel className="col-2 text-end">Assignment Group</FormLabel>
+                <FormLabel className="col-2 text-end">Points</FormLabel>
                 <Col className="col-8">
-                    <FormSelect defaultValue="ASSIGNMENTS" style={{maxWidth:"49%"}}> 
+                    <FormControl 
+                        type="number" 
+                        id="assignment-points" 
+                        value={formData.points} 
+                        onChange={(e) => setFormData({...formData, points: Number(e.target.value)})}
+                        style={{maxWidth:"49%"}}
+                    />
+                </Col>
+            </Row>
+            
+            <Row className="mb-3">
+                <FormLabel className="col-2 text-end">Assignment Group</FormLabel>
+                <Col className="col-8">
+                    <FormSelect 
+                        value={formData.assignmentGroup}
+                        onChange={(e) => setFormData({...formData, assignmentGroup: e.target.value})}
+                        style={{maxWidth:"49%"}}
+                    > 
                         <option value="ASSIGNMENTS">ASSIGNMENTS</option>
                         <option value="QUIZZES">QUIZZES</option>
                         <option value="EXAMS">EXAMS</option>
@@ -51,36 +147,73 @@ export default function Assignmenteditor() {
                     </FormSelect>
                 </Col>
             </Row>
-             <Row className="mb-3">
+            
+            <Row className="mb-3">
                 <FormLabel className="col-2 text-end">Display Grade as</FormLabel>
                 <Col className="col-8">
-                    <FormSelect defaultValue="Percentage" style={{maxWidth:"49%"}}> 
+                    <FormSelect 
+                        value={formData.displayGradeAs}
+                        onChange={(e) => setFormData({...formData, displayGradeAs: e.target.value})}
+                        style={{maxWidth:"49%"}}
+                    > 
                         <option value="Percentage">Percentage</option>
                         <option value="Points">Points</option>
                     </FormSelect>
                 </Col>
             </Row>
-             <Row className="mb-3">
+            
+            <Row className="mb-3">
                 <FormLabel className="col-2 text-end">Submission Type</FormLabel>
                 <Col className="col-8">
                     <div className="border p-3" style={{maxWidth:"49%"}}>
-                        <FormSelect defaultValue="Online" className="mb-3" style={{maxWidth:"49%"}}>
+                        <FormSelect 
+                            value={formData.submissionType}
+                            onChange={(e) => setFormData({...formData, submissionType: e.target.value})}
+                            className="mb-3"
+                        >
                             <option value="Online">Online</option>
                             <option value="Offline">Offline</option>
                         </FormSelect>
                         
                         <div>
                             <strong>Online Entry Options</strong>
-                            <FormCheck type="checkbox" label="Text Entry" className="mt-2" />
-                            <FormCheck type="checkbox" label="Website URL" defaultChecked />
-                            <FormCheck type="checkbox" label="Media Recordings" />
-                            <FormCheck type="checkbox" label="Student Annotation" />
-                            <FormCheck type="checkbox" label="File Uploads" />
+                            <FormCheck 
+                                type="checkbox" 
+                                label="Text Entry" 
+                                className="mt-2"
+                                checked={formData.textEntry}
+                                onChange={(e) => setFormData({...formData, textEntry: e.target.checked})}
+                            />
+                            <FormCheck 
+                                type="checkbox" 
+                                label="Website URL"
+                                checked={formData.websiteUrl}
+                                onChange={(e) => setFormData({...formData, websiteUrl: e.target.checked})}
+                            />
+                            <FormCheck 
+                                type="checkbox" 
+                                label="Media Recordings"
+                                checked={formData.mediaRecordings}
+                                onChange={(e) => setFormData({...formData, mediaRecordings: e.target.checked})}
+                            />
+                            <FormCheck 
+                                type="checkbox" 
+                                label="Student Annotation"
+                                checked={formData.studentAnnotation}
+                                onChange={(e) => setFormData({...formData, studentAnnotation: e.target.checked})}
+                            />
+                            <FormCheck 
+                                type="checkbox" 
+                                label="File Uploads"
+                                checked={formData.fileUploads}
+                                onChange={(e) => setFormData({...formData, fileUploads: e.target.checked})}
+                            />
                         </div>
                     </div>
                 </Col>
             </Row>
-           <Row className="mb-3">
+            
+            <Row className="mb-3">
                 <FormLabel className="col-2 text-end">Assign</FormLabel>
                 <Col className="col-8">
                     <div className="border p-3" style={{maxWidth:"49%"}}>
@@ -88,47 +221,54 @@ export default function Assignmenteditor() {
                         <FormControl type="text" defaultValue="Everyone" className="mb-3" />
                         
                         <FormLabel><strong>Due</strong></FormLabel>
-                        <FormControl type="date" id="assignment-due" defaultValue={assignment.dueDate} className="mb-3"/>
+                        <FormControl 
+                            type="date" 
+                            id="assignment-due" 
+                            value={formData.dueDate}
+                            onChange={(e) => setFormData({...formData, dueDate: e.target.value})}
+                            className="mb-3"
+                        />
                         
                         <Row>
                             <Col>
                                 <FormLabel><strong>Available from</strong></FormLabel>
-                                <FormControl type="date" id="assignment-availablefrom" defaultValue={assignment.availableFrom}/>
+                                <FormControl 
+                                    type="date" 
+                                    id="assignment-availablefrom" 
+                                    value={formData.availableFrom}
+                                    onChange={(e) => setFormData({...formData, availableFrom: e.target.value})}
+                                />
                             </Col>
                             <Col>
                                 <FormLabel><strong>Until</strong></FormLabel>
-                                <FormControl type="date" id="assignment-availableuntil" defaultValue={assignment.availableUntil}/>
+                                <FormControl 
+                                    type="date" 
+                                    id="assignment-availableuntil" 
+                                    value={formData.availableUntil}
+                                    onChange={(e) => setFormData({...formData, availableUntil: e.target.value})}
+                                />
                             </Col>
                         </Row>
                     </div>
                 </Col>
             </Row>
+            
             <hr />
-            <div className="float-end" >
-            <Button variant="secondary" className="me-2" onClick={() => router.push(`/kambaz/Courses/${cid}/assignments`)}>Cancel</Button>
-            <Button variant="danger" onClick={() => {
-             if (isNew) {
-            const newAssignment = {
-            _id: crypto.randomUUID(),
-            title: (document.getElementById("assignment-title") as HTMLInputElement).value,
-            description: (document.getElementById("assignment-description") as HTMLTextAreaElement).value,
-            points: Number((document.getElementById("assignment-points") as HTMLInputElement).value),
-            course:cid,
-            dueDate: (document.getElementById("assignment-due") as HTMLInputElement).value,
-            availableFrom: (document.getElementById("assignment-availablefrom") as HTMLInputElement).value,
-            availableUntil: (document.getElementById("assignment-availableuntil") as HTMLInputElement).value,
-            };
-            dispatch(addAssignment(newAssignment));
-             } else {
-            dispatch(updateAssignment({
-            ...assignment,
-            title: (document.getElementById("assignment-title") as HTMLInputElement).value,
-            description: (document.getElementById("assignment-description") as HTMLTextAreaElement).value,
-            points: Number((document.getElementById("assignment-points") as HTMLInputElement).value),
-            }));
-        }
-        router.push(`/kambaz/Courses/${cid}/assignments`);
-        }}>Save</Button>  
+            
+            <div className="float-end">
+                <Button 
+                    variant="secondary" 
+                    className="me-2" 
+                    onClick={() => router.push(`/kambaz/Courses/${cid}/assignments`)}
+                >
+                    Cancel
+                </Button>
+                <Button 
+                    variant="danger" 
+                    onClick={handleSave}
+                >
+                    Save
+                </Button>  
             </div>
         </div>
     );

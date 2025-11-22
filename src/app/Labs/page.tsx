@@ -17,6 +17,9 @@ export default function Labs() {
                     <Link href="/Labs/lab4">Lab 4 : State & Redux</Link>
                 </li>
                 <li>
+                    <Link href="/Labs/lab5">Lab 5 : Implementing Node.js </Link>
+                </li>
+                <li>
                     <Link href="/kambaz/Account/signin">Kambaz</Link>
                 </li>
             </ul>

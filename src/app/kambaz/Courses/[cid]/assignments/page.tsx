@@ -11,13 +11,23 @@ import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import { RootState } from "@/app/kambaz/store";
 import { deleteAssignment } from "./reducer";
+
 export default function AssignmentsPage() {
     const { cid } = useParams();
+
     const dispatch = useDispatch();
+
     const courseid = (cid as string).toUpperCase();
+
+    const router = useRouter();
+
     const assignments = useSelector((state: RootState) =>
     state.assignmentsReducer.filter((a: any) => a.course === courseid));
-    const router = useRouter();
+
+    const { currentUser } = useSelector((state: RootState) => state.accountReducer);
+
+    const isFaculty = currentUser?.role === "FACULTY" || currentUser?.role === "ADMIN";
+
     const handleDelete = (id: string) => {
     if (confirm("Are you sure you want to delete this assignment?")) {
       dispatch(deleteAssignment(id));
@@ -30,16 +40,25 @@ export default function AssignmentsPage() {
                     <FaSearch className="position-absolute" style={{left: "10px", top: "50%", transform: "translateY(-50%)", color: "#999"}} />
                     <FormControl type="text" placeholder="Search..." style={{paddingLeft: "35px"}} />
                 </div>
-                <div className="ms-auto gap-2 mb-3 d-flex">
-                    <Button variant="secondary" size="sm" id="wd-add-group-btn" className="text-nowrap">
-                        <FaPlus className="position-relative me-2" style={{ bottom: "1px" }} />
-                        Group
-                    </Button>
-                    <Button variant="danger" size="sm" onClick={() => router.push(`/kambaz/Courses/${cid}/assignments/new`)} id="wd-add-assignment-btn" className="text-nowrap">
-                        <FaPlus className="position-relative me-2" style={{ bottom: "1px" }} />
-                        Assignment
-                    </Button>
-                </div>
+                
+                {isFaculty && (
+                    <div className="ms-auto gap-2 mb-3 d-flex">
+                        <Button variant="secondary" size="sm" id="wd-add-group-btn" className="text-nowrap">
+                            <FaPlus className="position-relative me-2" style={{ bottom: "1px" }} />
+                            Group
+                        </Button>
+                        <Button 
+                            variant="danger" 
+                            size="sm" 
+                            onClick={() => router.push(`/kambaz/Courses/${cid}/assignments/new`)} 
+                            id="wd-add-assignment-btn" 
+                            className="text-nowrap"
+                        >
+                            <FaPlus className="position-relative me-2" style={{ bottom: "1px" }} />
+                            Assignment
+                        </Button>
+                    </div>
+                )}
             </div>
             
             <ListGroup className="rounded-0" id="wd-assignments">                
@@ -50,12 +69,16 @@ export default function AssignmentsPage() {
                             <span className="text-gray bg-transparent rounded-pill px-3 py-1 me-2" style={{ fontSize: "0.9rem" }}>
                                 40% of Total
                             </span>
-                            <Button variant="link" size="sm" className="me-1 p-0">
-                                <FaPlus color="#F5F5F5" />
-                            </Button>
-                            <Button variant="link" size="sm" className="p-0">
-                                <FaEllipsisV color="#F5F5F5" />
-                            </Button>
+                            {isFaculty && (
+                                <>
+                                    <Button variant="link" size="sm" className="me-1 p-0">
+                                        <FaPlus color="#F5F5F5" />
+                                    </Button>
+                                    <Button variant="link" size="sm" className="p-0">
+                                        <FaEllipsisV color="#F5F5F5" />
+                                    </Button>
+                                </>
+                            )}
                         </div>
                     </div>  
                     
@@ -71,18 +94,26 @@ export default function AssignmentsPage() {
                                     >
                                         {assignment.title}
                                     </Link>
-                                    <LessonControlButtons/>
-                                    <Button variant="link" className="text-danger ms-2 p-0" onClick={() => {
-                                        if (confirm(`Are you sure you want to delete "${assignment.title}"?`)) {
-                                        dispatch(deleteAssignment(assignment._id));
-                                            }
-                                    }}>Delete</Button>
+                                    
+                                    {isFaculty && (
+                                        <>
+                                            <LessonControlButtons/>
+                                            <Button 
+                                                variant="link" 
+                                                className="text-danger ms-2 p-0" 
+                                                onClick={() => handleDelete(assignment._id, assignment.title)}
+                                            >
+                                                Delete
+                                            </Button>
+                                        </>
+                                    )}
+                                    
                                     <p className="small mb-0">
                                         <span className="text-danger">Multiple Modules </span>
                                         | Not available until {assignment.availableFrom} at 00:00 |
                                     </p>                      
                                     <p>
-                                        Due {assignment.dueDate} 23:59 | -/100 pts
+                                        Due {assignment.dueDate} 23:59 | -/{assignment.points} pts
                                     </p>
                                 </div>
                             </div>
@@ -93,14 +124,16 @@ export default function AssignmentsPage() {
                 <ListGroupItem className="wd-module p-0 mb-5 border-gray">
                     <div className="wd-title p-3 ps-2 bg-secondary">
                         <BsGripVertical className="me-2 fs-5"/> Quizzes
-                        <span className="float-end">
-                            <Button variant="link"  size="sm" className="me-1">
-                                <FaPlus color="#F5F5F5"/>
-                            </Button>
-                            <Button variant="link" size="sm">
-                                <FaEllipsisV color="#F5F5F5" />
-                            </Button>
-                        </span>
+                        {isFaculty && (
+                            <span className="float-end">
+                                <Button variant="link" size="sm" className="me-1">
+                                    <FaPlus color="#F5F5F5"/>
+                                </Button>
+                                <Button variant="link" size="sm">
+                                    <FaEllipsisV color="#F5F5F5" />
+                                </Button>
+                            </span>
+                        )}
                     </div>
                     <ListGroupItem className="wd-lesson p-3 ps-6">
                         <div className="d-flex align-items-start">
@@ -108,10 +141,8 @@ export default function AssignmentsPage() {
                             <SlBookOpen className="me-2 fs-5 text-success"/>
                             <div className="flex-fill">
                                 <Link href={`/kambaz/Courses/${cid}/assignments/1`} className="wd-quiz-link">Q1</Link>
-                                <LessonControlButtons/>                      
-                                <p>
-                                    Not available until 22 Sep at 0:00 | Due 29 Sep at 23:59 | -/29 pts
-                                </p>
+                                {isFaculty && <LessonControlButtons/>}
+                                <p>Not available until 22 Sep at 0:00 | Due 29 Sep at 23:59 | -/29 pts</p>
                             </div>
                         </div>
                     </ListGroupItem>
@@ -121,24 +152,26 @@ export default function AssignmentsPage() {
                             <SlBookOpen className="me-2 fs-5 text-success"/>
                             <div className="flex-fill">
                                 <Link href={`/kambaz/Courses/${cid}/assignments/1`} className="wd-quiz-link">Q2</Link>
-                                <LessonControlButtons/>          
+                                {isFaculty && <LessonControlButtons/>}
                                 <p>Not available until 29 Sep at 0:00 | Due 06 Oct at 23:59 | -/29 pts</p>
                             </div>
                         </div>
                     </ListGroupItem>
-                </ListGroupItem>                
+                </ListGroupItem>
                 
                 <ListGroupItem className="wd-module p-0 mb-5 border-gray">
                     <div className="wd-title p-3 ps-2 bg-secondary">
                         <BsGripVertical className="me-2 fs-5"/> Exams 
-                        <span className="float-end">
-                            <Button variant="link"  size="sm" className="me-1">
-                                <FaPlus color="#F5F5F5"/>
-                            </Button>
-                            <Button variant="link" size="sm">
-                                <FaEllipsisV color="#F5F5F5" />
-                            </Button>
-                        </span>
+                        {isFaculty && (
+                            <span className="float-end">
+                                <Button variant="link" size="sm" className="me-1">
+                                    <FaPlus color="#F5F5F5"/>
+                                </Button>
+                                <Button variant="link" size="sm">
+                                    <FaEllipsisV color="#F5F5F5" />
+                                </Button>
+                            </span>
+                        )}
                     </div>
                     <ListGroupItem className="wd-lesson p-3 ps-6">
                         <div className="d-flex align-items-start">
@@ -146,7 +179,7 @@ export default function AssignmentsPage() {
                             <SlBookOpen className="me-2 fs-5 text-success"/>
                             <div className="flex-fill">
                                 <Link href={`/kambaz/Courses/${cid}/assignments/1`} className="wd-exam-link">X1</Link>
-                                <LessonControlButtons/>                      
+                                {isFaculty && <LessonControlButtons/>}
                                 <p>Due 3 Nov at 23:59 | -/100 pts</p>
                             </div>
                         </div>
@@ -157,7 +190,7 @@ export default function AssignmentsPage() {
                             <SlBookOpen className="me-2 fs-5 text-success"/>
                             <div className="flex-fill">
                                 <Link href={`/kambaz/Courses/${cid}/assignments/1`} className="wd-exam-link">X2</Link>
-                                <LessonControlButtons/>                      
+                                {isFaculty && <LessonControlButtons/>}
                                 <p>Due 7 Dec at 23:59 | -/100 pts</p>
                             </div>
                         </div>
@@ -167,14 +200,16 @@ export default function AssignmentsPage() {
                 <ListGroupItem className="wd-module p-0 mb-5 border-gray">
                     <div className="wd-title p-3 ps-2 bg-secondary">
                         <BsGripVertical className="me-2 fs-5"/> Projects 
-                        <span className="float-end">
-                            <Button variant="link"  size="sm" className="me-1">
-                                <FaPlus color="#F5F5F5"/>
-                            </Button>
-                            <Button variant="link" size="sm">
-                                <FaEllipsisV color="#F5F5F5" />
-                            </Button>
-                        </span>
+                        {isFaculty && (
+                            <span className="float-end">
+                                <Button variant="link" size="sm" className="me-1">
+                                    <FaPlus color="#F5F5F5"/>
+                                </Button>
+                                <Button variant="link" size="sm">
+                                    <FaEllipsisV color="#F5F5F5" />
+                                </Button>
+                            </span>
+                        )}
                     </div>
                     <ListGroupItem className="wd-lesson p-3 ps-6">
                         <div className="d-flex align-items-start">
@@ -184,7 +219,7 @@ export default function AssignmentsPage() {
                                 <Link href={`/kambaz/Courses/${cid}/assignments/1`} className="wd-project-link">
                                     Project - Kambaz Quizzes
                                 </Link>
-                                <LessonControlButtons/>                      
+                                {isFaculty && <LessonControlButtons/>}
                                 <p>Due 7 Dec at 23:59 | -/100 pts</p>
                             </div>
                         </div>
@@ -197,7 +232,7 @@ export default function AssignmentsPage() {
                                 <Link href={`/kambaz/Courses/${cid}/assignments/1`} className="wd-project-link">
                                     Project - Kambaz Pazza
                                 </Link>
-                                <LessonControlButtons/>                      
+                                {isFaculty && <LessonControlButtons/>}
                                 <p>Due 7 Dec at 23:59 | -/100 pts</p>
                             </div>
                         </div>
@@ -210,7 +245,7 @@ export default function AssignmentsPage() {
                                 <Link href={`/kambaz/Courses/${cid}/assignments/1`} className="wd-project-link">
                                     Project - Social Network
                                 </Link>
-                                <LessonControlButtons/>                      
+                                {isFaculty && <LessonControlButtons/>}
                                 <p>Due 7 Dec at 23:59 | -/100 pts</p>
                             </div>
                         </div>

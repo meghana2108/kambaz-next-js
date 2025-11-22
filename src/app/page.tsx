@@ -8,7 +8,7 @@ export default function Kambaz() {
             <p>Welcome to Kambaz!</p>
             <Link href="/kambaz/Account/signin">Sign In to Kambaz</Link>
             <br />
-            <Link href="/Labs/lab1">Click here to go to labs</Link>
+            <Link href="/Labs">Click here to go to labs</Link>
         </div>
     );
 }

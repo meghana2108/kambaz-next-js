@@ -7,7 +7,7 @@ import { HiOutlineInbox } from "react-icons/hi";
 import { ImLab } from "react-icons/im";
 import { ListGroupItem, ListGroup } from "react-bootstrap";
 import { usePathname, useParams } from "next/navigation";
-import courses from "@/app/kambaz/Database/courses.json";
+import courses from "@/app/kambaz/Database/courses";
 import Image from "next/image";
 import "./index.css";
 import Link from "next/link";
