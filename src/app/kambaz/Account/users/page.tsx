@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import PeopleTable from "./table";
 import * as client from "../client";
 import { FaPlus } from "react-icons/fa";
@@ -10,7 +10,7 @@ export default function Users() {
   const [role, setRole] = useState("");
   const [name, setName] = useState("");
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       let allUsers;
       if (role) {
@@ -24,35 +24,35 @@ export default function Users() {
     } catch (error) {
       console.error("Error fetching users:", error);
     }
-  };
+  }, [role, name]);
 
   const createUser = async () => {
-  try {
-    const timestamp = Date.now();
-    const newUserData = {
-      username: `newuser${timestamp}`,
-      password: "password123",
-      firstName: "New",
-      lastName: "User",
-      email: `newuser${timestamp}@example.com`,
-      dob: "2000-01-01",
-      role: "STUDENT",
-      section: "S101",
-    };
-    const newUser = await client.createUser(newUserData);
-    console.log("Created user response:", newUser);
-    console.log("User _id:", newUser._id);
-    
-    await fetchUsers();
-  } catch (error) {
-    console.error("Error creating user:", error);
-    alert("Failed to create user. Please try again.");
-  }
+    try {
+      const timestamp = Date.now();
+      const newUserData = {
+        username: `newuser${timestamp}`,
+        password: "password123",
+        firstName: "New",
+        lastName: "User",
+        email: `newuser${timestamp}@example.com`,
+        dob: "2000-01-01",
+        role: "STUDENT",
+        section: "S101",
+      };
+      const newUser = await client.createUser(newUserData);
+      console.log("Created user response:", newUser);
+      console.log("User _id:", newUser._id);
+      
+      await fetchUsers();
+    } catch (error) {
+      console.error("Error creating user:", error);
+      alert("Failed to create user. Please try again.");
+    }
   };
 
   useEffect(() => {
     fetchUsers();
-  }, [role, name]);
+  }, [fetchUsers]);
 
   const filterUsersByName = (searchName: string) => {
     setName(searchName);

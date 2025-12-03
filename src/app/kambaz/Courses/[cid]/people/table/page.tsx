@@ -1,17 +1,27 @@
 "use client";
 import React, { useState } from "react";
 import PeopleDetails from "../details";
-import Link from "next/link";
 import { Table } from "react-bootstrap";
 import { FaUserCircle } from "react-icons/fa";
 
-export default function PeopleTable({ users = [], fetchUsers }: { users?: any[]; fetchUsers?: () => void }) {
+interface User {
+  _id: string;
+  username: string;
+  firstName: string;
+  lastName: string;
+  section?: string;
+  role?: string;
+  lastActivity?: string;
+  totalActivity?: string;
+}
+
+export default function PeopleTable({ users = [], fetchUsers }: { users?: User[]; fetchUsers?: () => void }) {
   const [showDetails, setShowDetails] = useState(false);
   const [showUserId, setShowUserId] = useState<string | null>(null);
     return (
     <div id="wd-people-table">
       {showDetails && (
-        <PeopleDetails uid={showUserId} onClose={() => { setShowDetails(false); fetchUsers(); }} />
+        <PeopleDetails uid={showUserId} onClose={() => { setShowDetails(false); if (fetchUsers) fetchUsers(); }} />
       )}
       <Table striped bordered hover>
         <thead>
@@ -25,7 +35,7 @@ export default function PeopleTable({ users = [], fetchUsers }: { users?: any[];
           </tr>
         </thead>
         <tbody>
-          {users.map((user: any) => (
+          {users.map((user: User) => (
             <tr key={user._id}>
               <td className="wd-full-name text-nowrap">
                 <span className="text-decoration-none" onClick={() => {setShowDetails(true); setShowUserId(user._id);}}>

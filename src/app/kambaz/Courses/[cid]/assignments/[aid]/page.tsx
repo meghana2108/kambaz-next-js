@@ -9,6 +9,25 @@ import { useEffect, useState } from "react";
 import * as client from "../../../client"; 
 import { addAssignment, updateAssignment } from "../reducer";
 
+interface AssignmentFormData {
+    _id: string;
+    course: string;
+    title: string;
+    description: string;
+    points: number;
+    assignmentGroup: string;
+    displayGradeAs: string;
+    submissionType: string;
+    dueDate: string;
+    availableFrom: string;
+    availableUntil: string;
+    textEntry: boolean;
+    websiteUrl: boolean;
+    mediaRecordings: boolean;
+    studentAnnotation: boolean;
+    fileUploads: boolean;
+}
+
 export default function AssignmentEditor() {
     const { cid, aid } = useParams();
     const isNew = aid === "new";
@@ -24,7 +43,7 @@ export default function AssignmentEditor() {
     const isFaculty = currentUser?.role === "FACULTY" || currentUser?.role === "ADMIN";
 
     const [loading, setLoading] = useState(true);
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<AssignmentFormData>({
         _id: "",
         course: courseId,
         title: "",
@@ -49,10 +68,10 @@ export default function AssignmentEditor() {
             if (!isNew && aid) {
                 try {
                     const assignment = await client.findAssignmentById(aid as string);
-                    setFormData({
-                        ...formData,
+                    setFormData((currentFormData) => ({
+                        ...currentFormData,
                         ...assignment,
-                    });
+                    }));
                 } catch (error) {
                     console.error("Failed to load assignment:", error);
                     alert("Failed to load assignment");
@@ -62,6 +81,7 @@ export default function AssignmentEditor() {
         };
 
         loadAssignment();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [aid, isNew]);
 
     // Check faculty permission

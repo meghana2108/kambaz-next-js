@@ -17,7 +17,7 @@ interface Lesson {
   name: string;
 }
 
-interface Module {
+interface ModuleType {
   _id: string;
   name: string;
   description?: string;
@@ -71,7 +71,7 @@ export default function Modules() {
 
   const onRemoveModule = async (moduleIdentifier: string) => {
     try {
-      const foundModule = modules.find((m) => 
+      const foundModule = modules.find((m: ModuleType) => 
         m._id === moduleIdentifier || 
         (m as any).id === moduleIdentifier || 
         m.name === moduleIdentifier
@@ -80,7 +80,7 @@ export default function Modules() {
       const deleteId = foundModule?._id || (foundModule as any)?.id || moduleIdentifier;
       await client.deleteModule(cid, deleteId);
       
-      dispatch(setModule(modules.filter((m) => {
+      dispatch(setModule(modules.filter((m: ModuleType) => {
         const matches = m._id === moduleIdentifier || 
                        (m as any).id === moduleIdentifier || 
                        m.name === moduleIdentifier;
@@ -96,7 +96,7 @@ export default function Modules() {
     (moduleIdentifier: string) => {
       console.log("Edit clicked for module:", moduleIdentifier);
       
-      const updatedModules = modules.map((m) => {
+      const updatedModules = modules.map((m: ModuleType) => {
         const matches = m._id === moduleIdentifier || 
                        (m as any).id === moduleIdentifier || 
                        m.name === moduleIdentifier;
@@ -113,7 +113,7 @@ export default function Modules() {
       const newName = editingValues[moduleIdentifier];
       if (!newName) return;
 
-      const foundModule = modules.find((m) => 
+      const foundModule = modules.find((m: ModuleType) => 
         m._id === moduleIdentifier || 
         (m as any).id === moduleIdentifier || 
         m.name === moduleIdentifier
@@ -133,7 +133,7 @@ export default function Modules() {
         const updateId = foundModule._id || (foundModule as any).id || moduleIdentifier;
         const updated = await client.updateModule(cid, updateId, body);
         
-        const updatedModules = modules.map((m) => {
+        const updatedModules = modules.map((m: ModuleType) => {
           const matchesModule = m._id === moduleIdentifier || 
                                (m as any).id === moduleIdentifier || 
                                m.name === moduleIdentifier;
@@ -169,7 +169,7 @@ export default function Modules() {
         )}
 
         {modules.length > 0 ? (
-          modules.map((moduleItem, index) => {
+          modules.map((moduleItem: ModuleType, index: number) => {
             const moduleId = moduleItem._id || (moduleItem as any).id || moduleItem.name || `module-${index}`;
             
             console.log("Rendering module:", { 
@@ -192,13 +192,13 @@ export default function Modules() {
                       className="w-50 d-inline-block"
                       autoFocus
                       defaultValue={moduleItem.name}
-                      onChange={(e) => {
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         setEditingValues((prev) => ({
                           ...prev,
                           [moduleId]: e.target.value,
                         }));
                       }}
-                      onKeyDown={(e) => {
+                      onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                         if (e.key === "Enter") {
                           console.log("Enter pressed, moduleId:", moduleId);
                           console.log("Current module:", moduleItem);
@@ -219,7 +219,7 @@ export default function Modules() {
 
                 {moduleItem.lessons && moduleItem.lessons.length > 0 && (
                   <ListGroup className="wd-lessons rounded-0">
-                    {moduleItem.lessons.map((lesson, lessonIndex) => {
+                    {moduleItem.lessons.map((lesson: Lesson, lessonIndex: number) => {
                       const lessonId = lesson._id || (lesson as any).id || lesson.name || `lesson-${lessonIndex}`;
                       return (
                         <ListGroupItem key={lessonId} className="wd-lesson p-3 ps-1">

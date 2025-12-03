@@ -1,11 +1,21 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { FaPencil } from "react-icons/fa6";
 import { FaCheck, FaUserCircle } from "react-icons/fa";
 import { IoCloseSharp } from "react-icons/io5";
 
+interface User {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  role: string;
+  loginId: string;
+  section: string;
+  totalActivity: string;
+}
+
 // Mock client for demonstration
 const client = {
-  findUserById: async (id: string) => ({
+  findUserById: async (id: string): Promise<User> => ({
     _id: id,
     firstName: "John",
     lastName: "Doe",
@@ -14,20 +24,21 @@ const client = {
     section: "A1",
     totalActivity: "10 hours"
   }),
-  updateUser: async (user: any) => console.log("Updating:", user),
+  updateUser: async (user: User) => console.log("Updating:", user),
   deleteUser: async (id: string) => console.log("Deleting:", id)
 };
 
 export default function PeopleDetails({uid, onClose}: {uid: string | null; onClose: () => void}) {
     const [name, setName] = useState("");
     const [editing, setEditing] = useState(false);
-    const [user, setUser] = useState<any>(null);
+    const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     const saveUser = async () => {
+        if (!user) return;
         const [firstName, lastName] = name.split(" ");
-        const updatedUser = { ...user, firstName, lastName };
+        const updatedUser: User = { ...user, firstName, lastName };
         await client.updateUser(updatedUser);
         setUser(updatedUser);
         setEditing(false);
@@ -39,36 +50,41 @@ export default function PeopleDetails({uid, onClose}: {uid: string | null; onClo
         onClose();
     };
 
-   const fetchUser = async () => {
-    if (!uid) return;
-    
-    setLoading(true);
-    setError(null);
-    
-    try {
-        console.log("Fetching user with ID:", uid);
-        const fetchedUser = await client.findUserById(uid);
-        console.log("Fetched user:", fetchedUser);
+    const fetchUser = useCallback(async () => {
+        if (!uid) return;
         
-        setUser(fetchedUser);
-        setName(`${fetchedUser.firstName || ""} ${fetchedUser.lastName || ""}`.trim());
-    } catch (err: any) {
-        console.error("Error fetching user:", err);
-        if (err.response?.status === 404) {
-            setError(`User with ID ${uid} not found`);
-        } else {
-            setError("Failed to load user details");
+        setLoading(true);
+        setError(null);
+        
+        try {
+            console.log("Fetching user with ID:", uid);
+            const fetchedUser = await client.findUserById(uid);
+            console.log("Fetched user:", fetchedUser);
+            
+            setUser(fetchedUser);
+            setName(`${fetchedUser.firstName || ""} ${fetchedUser.lastName || ""}`.trim());
+        } catch (err: unknown) {
+            console.error("Error fetching user:", err);
+            if (err && typeof err === 'object' && 'response' in err) {
+                const response = (err as any).response;
+                if (response?.status === 404) {
+                    setError(`User with ID ${uid} not found`);
+                } else {
+                    setError("Failed to load user details");
+                }
+            } else {
+                setError("Failed to load user details");
+            }
+        } finally {
+            setLoading(false);
         }
-    } finally {
-        setLoading(false);
-    }
-};
+    }, [uid]);
 
     useEffect(() => {
         if (uid) {
             fetchUser();
         }
-    }, [uid]);
+    }, [uid, fetchUser]);
 
     if (!uid) return null;
 
@@ -114,8 +130,8 @@ export default function PeopleDetails({uid, onClose}: {uid: string | null; onClo
                                 type="text"
                                 className="form-control w-75" 
                                 defaultValue={`${user.firstName || ""} ${user.lastName || ""}`.trim()}
-                                onChange={(e) => setName(e.target.value)} 
-                                onKeyDown={(e) => {
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)} 
+                                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                                     if (e.key === "Enter") {
                                         saveUser();
                                     }

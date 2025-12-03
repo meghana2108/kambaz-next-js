@@ -7,26 +7,30 @@ import { useDispatch } from "react-redux";
 import { useState } from "react";
 import { FormControl, Button } from "react-bootstrap";
 
+interface Credentials {
+    username?: string;
+    password?: string;
+}
+
 export default function SignIn() {
-    const [credentials, setCredentials] = useState<any>({});
+    const [credentials, setCredentials] = useState<Credentials>({});
     const [error, setError] = useState(""); 
     const dispatch = useDispatch();
     const router = useRouter(); 
 
     const signin = async () => {
         try {
-            console.log('Signing in with:', credentials);
             const user = await client.signin(credentials);
-            console.log("FULL USER OBJECT FROM API:", user);
-            console.log('User received:', user);
             
             if (!user) return;
             
             dispatch(setCurrentUser(user));
             router.push("/kambaz/Dashboard"); 
-        } catch (error: any) {
-            console.error('Signin error:', error);
-            setError(error.response?.data?.message || "Login failed. Please try again.");
+        } catch (error: unknown) {
+            const errorMessage = error instanceof Error && 'response' in error 
+                ? (error as any).response?.data?.message 
+                : "Login failed. Please try again.";
+            setError(errorMessage);
         }
     };
 

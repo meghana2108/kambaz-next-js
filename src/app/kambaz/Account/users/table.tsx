@@ -4,11 +4,23 @@ import PeopleDetails from "./details";
 import { Table } from "react-bootstrap";
 import { FaUserCircle } from "react-icons/fa";
 
+interface User {
+  _id?: string;
+  id?: string;
+  username: string;
+  firstName: string;
+  lastName: string;
+  section?: string;
+  role?: string;
+  lastActivity?: string;
+  totalActivity?: string;
+}
+
 export default function PeopleTable({ 
   users = [], 
   fetchUsers 
 }: { 
-  users?: any[]; 
+  users?: User[]; 
   fetchUsers?: () => void;
 }) {
   const [showDetails, setShowDetails] = useState(false);
@@ -46,7 +58,7 @@ export default function PeopleTable({
           </tr>
         </thead>
         <tbody>
-          {users.map((user: any, index: number) => {
+          {users.map((user: User, index: number) => {
             const userId = user._id || user.id || `user-${index}`;
             return (
               <tr key={userId}>

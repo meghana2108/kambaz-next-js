@@ -1,10 +1,22 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { FaPencil } from "react-icons/fa6";
 import { FaCheck, FaUserCircle } from "react-icons/fa";
 import { IoCloseSharp } from "react-icons/io5";
 import * as client from "../client";
 import { FormControl, FormSelect } from "react-bootstrap";
+
+interface User {
+  _id: string;
+  username: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  role?: string;
+  loginId?: string;
+  section?: string;
+  totalActivity?: string;
+}
 
 export default function PeopleDetails({
   uid,
@@ -19,30 +31,30 @@ export default function PeopleDetails({
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("");
   const [editing, setEditing] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
+
+  const fetchUser = useCallback(async () => {
+    if (!uid) return;
+    try {
+      const fetchedUser = await client.findUserById(uid);
+      setUser(fetchedUser);
+      setName(`${fetchedUser.firstName || ""} ${fetchedUser.lastName || ""}`);
+      setEmail(fetchedUser.email || "");
+      setRole(fetchedUser.role || "STUDENT");
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      setUser(null);
+    }
+  }, [uid]);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      if (!uid) return;
-      try {
-        const fetchedUser = await client.findUserById(uid);
-        setUser(fetchedUser);
-        setName(`${fetchedUser.firstName || ""} ${fetchedUser.lastName || ""}`);
-        setEmail(fetchedUser.email || "");
-        setRole(fetchedUser.role || "STUDENT");
-      } catch (error) {
-        console.error("Error fetching user:", error);
-        setUser(null);
-      }
-    };
-
     fetchUser();
-  }, [uid]);
+  }, [fetchUser]);
 
   const saveUser = async () => {
     if (!user) return;
     const [firstName, lastName] = name.split(" ");
-    const updatedUser = { 
+    const updatedUser: User = { 
       ...user, 
       firstName, 
       lastName,

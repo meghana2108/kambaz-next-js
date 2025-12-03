@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { ListGroup, ListGroupItem, Button, FormControl } from "react-bootstrap";
 import { BsGripVertical } from "react-icons/bs";
 import LessonControlButtons from "../modules/LessonControlButtons";
@@ -12,18 +11,26 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/app/kambaz/store";
 import * as client from "../../client";
 
+interface Assignment {
+    _id: string;
+    title: string;
+    availableFrom: string;
+    dueDate: string;
+    points: number;
+}
+
 export default function AssignmentsPage() {
     const { cid } = useParams();
     const courseid = cid as string;
     const router = useRouter();
 
-    const [assignments, setAssignments] = useState<any[]>([]);
+    const [assignments, setAssignments] = useState<Assignment[]>([]);
     const [loading, setLoading] = useState(true);
 
     const { currentUser } = useSelector((state: RootState) => state.accountReducer);
     const isFaculty = currentUser?.role === "FACULTY" || currentUser?.role === "ADMIN";
 
-    const loadAssignments = async () => {
+    const loadAssignments = useCallback(async () => {
         try {
             setLoading(true);
             const data = await client.findAssignmentsForCourse(courseid);
@@ -34,13 +41,13 @@ export default function AssignmentsPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [courseid]);
 
     useEffect(() => {
         if (courseid) {
             loadAssignments();
         }
-    }, [courseid]);
+    }, [courseid, loadAssignments]);
 
     const handleDelete = async (id: string) => {
         if (!confirm("Are you sure you want to delete this assignment?")) return;
@@ -113,7 +120,7 @@ export default function AssignmentsPage() {
                             No assignments yet. Click &quot;Assignment&quot; to create one.
                         </ListGroupItem>
                     ) : (
-                        assignments.map((assignment: any) => (
+                        assignments.map((assignment: Assignment) => (
                             <ListGroupItem key={assignment._id} className="wd-lesson p-3 ps-6">
                                 <div className="d-flex align-items-start">
                                     <BsGripVertical className="me-2 fs-5"/>
