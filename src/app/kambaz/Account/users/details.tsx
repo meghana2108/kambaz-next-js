@@ -1,46 +1,33 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
-import { FaPencil } from "react-icons/fa6";
 import { FaCheck, FaUserCircle } from "react-icons/fa";
+import { FaPencil } from "react-icons/fa6";
 import { IoCloseSharp } from "react-icons/io5";
-import * as client from "../client";
 import { FormControl, FormSelect } from "react-bootstrap";
+import type { User } from "../client";
+import * as client from "../client";
 
-interface User {
-  _id: string;
-  username: string;
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  role?: string;
-  loginId?: string;
-  section?: string;
-  totalActivity?: string;
-}
-
-export default function PeopleDetails({
-  uid,
-  onClose,
-  onUpdate,
-}: {
+interface PeopleDetailsProps {
   uid: string | null;
   onClose: () => void;
   onUpdate?: () => void;
-}) {
+}
+
+export default function PeopleDetails({ uid, onClose, onUpdate }: PeopleDetailsProps) {
+  const [user, setUser] = useState<User | null>(null);
+  const [editing, setEditing] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState("");
-  const [editing, setEditing] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
+  const [role, setRole] = useState<User["role"]>();
 
   const fetchUser = useCallback(async () => {
     if (!uid) return;
     try {
       const fetchedUser = await client.findUserById(uid);
       setUser(fetchedUser);
-      setName(`${fetchedUser.firstName || ""} ${fetchedUser.lastName || ""}`);
-      setEmail(fetchedUser.email || "");
-      setRole(fetchedUser.role || "STUDENT");
+      setName([fetchedUser.firstName, fetchedUser.lastName].filter(Boolean).join(" "));
+      setEmail(fetchedUser.email ?? "");
+      setRole(fetchedUser.role);
     } catch (error) {
       console.error("Error fetching user:", error);
       setUser(null);
@@ -53,28 +40,39 @@ export default function PeopleDetails({
 
   const saveUser = async () => {
     if (!user) return;
+
     const [firstName, lastName] = name.split(" ");
-    const updatedUser: User = { 
-      ...user, 
-      firstName, 
+    const updatedUser: User = {
+      ...user,
+      firstName,
       lastName,
       email,
-      role
+      role,
     };
-    await client.updateUser(updatedUser);
-    setUser(updatedUser);
-    setEditing(false);
-    if (onUpdate) onUpdate();
+
+    try {
+      await client.updateUser(updatedUser);
+      setUser(updatedUser);
+      setEditing(false);
+      if (onUpdate) onUpdate();
+    } catch (error) {
+      console.error("Error updating user:", error);
+      alert("Failed to save user. Please try again.");
+    }
   };
 
   const deleteUser = async (uid: string) => {
-    await client.deleteUser(uid);
-    if (onUpdate) onUpdate();
-    onClose();
+    try {
+      await client.deleteUser(uid);
+      if (onUpdate) onUpdate();
+      onClose();
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      alert("Failed to delete user. Please try again.");
+    }
   };
 
-  if (!uid) return null;
-  if (!user) return null;
+  if (!uid || !user) return null;
 
   return (
     <div
@@ -87,11 +85,12 @@ export default function PeopleDetails({
       >
         <IoCloseSharp className="fs-1" />
       </button>
+
       <div className="text-center mt-2">
         <FaUserCircle className="text-secondary me-2 fs-1" />
       </div>
       <hr />
-      
+
       <div className="text-danger fs-4 wd-name mb-3">
         {!editing && (
           <FaPencil
@@ -107,25 +106,19 @@ export default function PeopleDetails({
             style={{ cursor: "pointer" }}
           />
         )}
-        {!editing && (
-          <div
-            className="wd-name"
-            onClick={() => setEditing(true)}
-            style={{ cursor: "pointer" }}
-          >
-            {user.firstName} {user.lastName}
+
+        {!editing ? (
+          <div style={{ cursor: "pointer" }}>
+            {[user.firstName, user.lastName].filter(Boolean).join(" ") || "Unnamed User"}
           </div>
-        )}
-        {editing && (
+        ) : (
           <FormControl
             className="w-75 wd-edit-name mb-2"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="First Last"
             onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                saveUser();
-              }
+              if (e.key === "Enter") saveUser();
             }}
           />
         )}
@@ -133,8 +126,9 @@ export default function PeopleDetails({
 
       <div className="mb-2">
         <b>Email:</b>{" "}
-        {!editing && <span className="wd-email">{user.email || "N/A"}</span>}
-        {editing && (
+        {!editing ? (
+          <span>{user.email ?? "N/A"}</span>
+        ) : (
           <FormControl
             type="email"
             className="mt-1 wd-edit-email"
@@ -147,12 +141,13 @@ export default function PeopleDetails({
 
       <div className="mb-2">
         <b>Role:</b>{" "}
-        {!editing && <span className="wd-roles">{user.role}</span>}
-        {editing && (
+        {!editing ? (
+          <span>{user.role ?? "STUDENT"}</span>
+        ) : (
           <FormSelect
             className="mt-1 wd-edit-role"
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
+            value={role ?? ""}
+            onChange={(e) => setRole(e.target.value as User["role"])}
           >
             <option value="STUDENT">Student</option>
             <option value="FACULTY">Faculty</option>
@@ -162,14 +157,18 @@ export default function PeopleDetails({
         )}
       </div>
 
-      <b>Login ID:</b>{" "}
-      <span className="wd-login-id">{user.loginId || user.username}</span>
-      <br />
-      <b>Section:</b> <span className="wd-section">{user.section}</span>
-      <br />
-      <b>Total Activity:</b>{" "}
-      <span className="wd-total-activity">{user.totalActivity}</span>
+      <div>
+        <b>Login ID:</b> {user.loginId ?? user.username}
+      </div>
+      <div>
+        <b>Section:</b> {user.section ?? "N/A"}
+      </div>
+      <div>
+        <b>Total Activity:</b> {user.totalActivity ?? "-"}
+      </div>
+
       <hr />
+
       <button
         onClick={() => deleteUser(uid)}
         className="btn btn-danger float-end wd-delete"

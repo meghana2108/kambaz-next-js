@@ -5,7 +5,7 @@ const HTTP_SERVER = process.env.NEXT_PUBLIC_HTTP_SERVER;
 const axiosWithCredentials = axios.create({ withCredentials: true });
 
 export interface Module {
-  _id?: string;
+  _id: string;
   name: string;
   course: string;
   lessons?: Lesson[];
@@ -18,7 +18,7 @@ export interface Lesson {
 }
 
 export interface Assignment {
-  _id?: string;
+  _id: string;
   course: string;
   title: string;
   description: string;
@@ -79,7 +79,9 @@ export const deleteModule = async (courseId: string, moduleId: string): Promise<
   return response.data;
 };
 
-export const updateModule = async (courseId, moduleId, updates) => {
+export const updateModule = async (
+  courseId: string, moduleId: string, updates: Partial<Omit<Module, "_id">>
+) => {
   console.log("PUT URL:", `${COURSES_API}/${courseId}/modules/${moduleId}`);
   console.log("PUT BODY:", updates);
 

@@ -1,5 +1,4 @@
 "use client";
-
 import { FormLabel, Row, Col, FormControl, FormSelect, FormCheck, Button } from "react-bootstrap";
 import { useParams } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
@@ -62,7 +61,6 @@ export default function AssignmentEditor() {
         fileUploads: false,
     });
 
-    // Fetch assignment data if editing
     useEffect(() => {
         const loadAssignment = async () => {
             if (!isNew && aid) {
@@ -79,12 +77,9 @@ export default function AssignmentEditor() {
             }
             setLoading(false);
         };
-
         loadAssignment();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [aid, isNew]);
 
-    // Check faculty permission
     useEffect(() => {
         if (currentUser && !isFaculty) {
             alert("Only faculty can create or edit assignments");

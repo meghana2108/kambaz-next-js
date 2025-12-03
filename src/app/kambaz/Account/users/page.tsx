@@ -1,18 +1,20 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
 import PeopleTable from "./table";
-import * as client from "../client";
+import * as client from "../client"; 
 import { FaPlus } from "react-icons/fa";
 import { Button, FormControl, FormSelect } from "react-bootstrap";
+import type { User } from "../client";
 
 export default function Users() {
-  const [users, setUsers] = useState([]);
-  const [role, setRole] = useState("");
-  const [name, setName] = useState("");
+  const [users, setUsers] = useState<User[]>([]);
+  const [role, setRole] = useState<User["role"]>();
+  const [name, setName] = useState<string>("");
 
   const fetchUsers = useCallback(async () => {
     try {
-      let allUsers;
+      let allUsers: User[];
+
       if (role) {
         allUsers = await client.findUsersByRole(role);
       } else if (name) {
@@ -20,6 +22,7 @@ export default function Users() {
       } else {
         allUsers = await client.findAllUsers();
       }
+
       setUsers(allUsers);
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -29,7 +32,7 @@ export default function Users() {
   const createUser = async () => {
     try {
       const timestamp = Date.now();
-      const newUserData = {
+      const newUserData: User = {
         username: `newuser${timestamp}`,
         password: "password123",
         firstName: "New",
@@ -39,10 +42,10 @@ export default function Users() {
         role: "STUDENT",
         section: "S101",
       };
+
       const newUser = await client.createUser(newUserData);
-      console.log("Created user response:", newUser);
-      console.log("User _id:", newUser._id);
-      
+      console.log("Created user:", newUser);
+
       await fetchUsers();
     } catch (error) {
       console.error("Error creating user:", error);
@@ -56,11 +59,11 @@ export default function Users() {
 
   const filterUsersByName = (searchName: string) => {
     setName(searchName);
-    setRole("");
+    setRole(undefined);
   };
 
   const filterUsersByRole = (selectedRole: string) => {
-    setRole(selectedRole);
+    setRole(selectedRole as User["role"]);
     setName("");
   };
 
@@ -69,7 +72,7 @@ export default function Users() {
       <div className="d-flex justify-content-between align-items-center mb-3">
         <div className="d-flex gap-2">
           <FormSelect
-            value={role}
+            value={role ?? ""}
             onChange={(e) => filterUsersByRole(e.target.value)}
             className="wd-select-role"
             style={{ width: "200px" }}

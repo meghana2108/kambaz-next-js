@@ -27,7 +27,8 @@ interface ModuleType {
 }
 
 export default function Modules() {
-  const { cid } = useParams();
+  const params = useParams();
+  const cid = Array.isArray(params.cid) ? params.cid[0] : params.cid;
   const dispatch = useDispatch();
 
   const { currentUser } = useSelector((state: RootState) => state.accountReducer);
@@ -41,9 +42,7 @@ export default function Modules() {
   const fetchModules = useCallback(async () => {
     if (!cid) return;
     try {
-      const fetchedModules = await client.findModulesForCourse(cid);
-      console.log("Fetched modules from API:", fetchedModules);
-      console.log("First module structure:", fetchedModules[0]);
+      const fetchedModules: ModuleType[] = await client.findModulesForCourse(cid);
       dispatch(setModule(fetchedModules));
     } catch (err) {
       console.error("Error fetching modules:", err);
@@ -60,7 +59,7 @@ export default function Modules() {
     const newModule = { name: moduleName.trim(), description: "", course: cid };
 
     try {
-      const created = await client.createModuleForCourse(cid, newModule);
+      const created: ModuleType = await client.createModuleForCourse(cid, newModule);
       dispatch(setModule([...modules, created]));
       setModuleName("");
     } catch (err) {
@@ -69,23 +68,10 @@ export default function Modules() {
     }
   };
 
-  const onRemoveModule = async (moduleIdentifier: string) => {
+  const onRemoveModule = async (moduleId: string) => {
     try {
-      const foundModule = modules.find((m: ModuleType) => 
-        m._id === moduleIdentifier || 
-        (m as any).id === moduleIdentifier || 
-        m.name === moduleIdentifier
-      );
-      
-      const deleteId = foundModule?._id || (foundModule as any)?.id || moduleIdentifier;
-      await client.deleteModule(cid, deleteId);
-      
-      dispatch(setModule(modules.filter((m: ModuleType) => {
-        const matches = m._id === moduleIdentifier || 
-                       (m as any).id === moduleIdentifier || 
-                       m.name === moduleIdentifier;
-        return !matches;
-      })));
+      await client.deleteModule(cid!, moduleId);
+      dispatch(setModule(modules.filter((m) => m._id !== moduleId)));
     } catch (err) {
       console.error("Delete error:", err);
       alert("Failed to delete module");
@@ -93,58 +79,42 @@ export default function Modules() {
   };
 
   const handleEditModule = useCallback(
-    (moduleIdentifier: string) => {
-      console.log("Edit clicked for module:", moduleIdentifier);
-      
-      const updatedModules = modules.map((m: ModuleType) => {
-        const matches = m._id === moduleIdentifier || 
-                       (m as any).id === moduleIdentifier || 
-                       m.name === moduleIdentifier;
-        return matches ? { ...m, editing: true } : { ...m, editing: false };
-      });
-      
+    (moduleId: string) => {
+      const updatedModules = modules.map((m) =>
+        m._id === moduleId ? { ...m, editing: true } : { ...m, editing: false }
+      );
       dispatch(setModule(updatedModules));
     },
     [modules, dispatch]
   );
 
   const onUpdateModule = useCallback(
-    async (moduleIdentifier: string) => {
-      const newName = editingValues[moduleIdentifier];
+    async (moduleId: string) => {
+      const newName = editingValues[moduleId];
       if (!newName) return;
 
-      const foundModule = modules.find((m: ModuleType) => 
-        m._id === moduleIdentifier || 
-        (m as any).id === moduleIdentifier || 
-        m.name === moduleIdentifier
-      );
-
+      const foundModule = modules.find((m) => m._id === moduleId);
       if (!foundModule) {
-        console.error("Cannot update module: module not found", moduleIdentifier);
-        console.log("Available modules:", modules);
-        console.log("Looking for identifier:", moduleIdentifier);
         alert("Update failed: Module not found!");
         return;
       }
 
-      const body = { name: newName.trim(), description: foundModule.description || "", course: foundModule.course };
+      const body = {
+        name: newName.trim(),
+        description: foundModule.description || "",
+        course: foundModule.course,
+      };
 
       try {
-        const updateId = foundModule._id || (foundModule as any).id || moduleIdentifier;
-        const updated = await client.updateModule(cid, updateId, body);
-        
-        const updatedModules = modules.map((m: ModuleType) => {
-          const matchesModule = m._id === moduleIdentifier || 
-                               (m as any).id === moduleIdentifier || 
-                               m.name === moduleIdentifier;
-          return matchesModule ? { ...m, ...updated, editing: false } : m;
-        });
-        
+        const updated: ModuleType = await client.updateModule(cid!, moduleId, body);
+        const updatedModules = modules.map((m) =>
+          m._id === moduleId ? { ...m, ...updated, editing: false } : m
+        );
         dispatch(setModule(updatedModules));
-        
+
         setEditingValues((prev) => {
           const newValues = { ...prev };
-          delete newValues[moduleIdentifier];
+          delete newValues[moduleId];
           return newValues;
         });
       } catch (err) {
@@ -155,12 +125,11 @@ export default function Modules() {
     [modules, cid, dispatch, editingValues]
   );
 
+  if (!cid) return <div className="text-center p-5">Invalid course ID</div>;
+
   return (
     <div>
-      {loading && modules.length === 0 && (
-        <div className="text-center p-5">Loading modules...</div>
-      )}
-
+      {loading && modules.length === 0 && <div className="text-center p-5">Loading modules...</div>}
       {error && <div className="alert alert-danger">Error: {error}</div>}
 
       <ListGroup id="wd-modules" className="rounded-0">
@@ -169,22 +138,13 @@ export default function Modules() {
         )}
 
         {modules.length > 0 ? (
-          modules.map((moduleItem: ModuleType, index: number) => {
-            const moduleId = moduleItem._id || (moduleItem as any).id || moduleItem.name || `module-${index}`;
-            
-            console.log("Rendering module:", { 
-              name: moduleItem.name, 
-              _id: moduleItem._id, 
-              id: (moduleItem as any).id,
-              usingId: moduleId,
-              fullModule: moduleItem 
-            });
-            
+          modules.map((moduleItem) => {
+            const moduleId = moduleItem._id;
+
             return (
               <ListGroupItem key={moduleId} className="wd-module p-0 mb-5 fs-5 border-gray">
                 <div className="wd-title p-3 ps-2 bg-secondary">
                   <BsGripVertical className="me-2 fs-3" />
-
                   {!moduleItem.editing && moduleItem.name}
 
                   {moduleItem.editing && isFaculty && (
@@ -192,19 +152,8 @@ export default function Modules() {
                       className="w-50 d-inline-block"
                       autoFocus
                       defaultValue={moduleItem.name}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        setEditingValues((prev) => ({
-                          ...prev,
-                          [moduleId]: e.target.value,
-                        }));
-                      }}
-                      onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                        if (e.key === "Enter") {
-                          console.log("Enter pressed, moduleId:", moduleId);
-                          console.log("Current module:", moduleItem);
-                          onUpdateModule(moduleId);
-                        }
-                      }}
+                      onChange={(e) => setEditingValues((prev) => ({ ...prev, [moduleId]: e.target.value }))}
+                      onKeyDown={(e) => e.key === "Enter" && onUpdateModule(moduleId)}
                     />
                   )}
 
@@ -217,19 +166,19 @@ export default function Modules() {
                   )}
                 </div>
 
-                {moduleItem.lessons && moduleItem.lessons.length > 0 && (
-                  <ListGroup className="wd-lessons rounded-0">
-                    {moduleItem.lessons.map((lesson: Lesson, lessonIndex: number) => {
-                      const lessonId = lesson._id || (lesson as any).id || lesson.name || `lesson-${lessonIndex}`;
-                      return (
-                        <ListGroupItem key={lessonId} className="wd-lesson p-3 ps-1">
-                          <BsGripVertical className="me-2 fs-3" />
-                          {lesson.name}
-                          {isFaculty && <LessonControlButtons />}
-                        </ListGroupItem>
-                      );
-                    })}
-                  </ListGroup>
+               {moduleItem.lessons && moduleItem.lessons.length > 0 && (
+                <ListGroup className="wd-lessons rounded-0">
+                  {moduleItem.lessons.map((lesson) => {
+                    const lessonId = lesson._id;
+                    return (
+                      <ListGroupItem key={lessonId} className="wd-lesson p-3 ps-1">
+                        <BsGripVertical className="me-2 fs-3" />
+                        {lesson.name}
+                        {isFaculty && <LessonControlButtons />}
+                      </ListGroupItem>
+                    );
+                  })}
+                </ListGroup>
                 )}
               </ListGroupItem>
             );

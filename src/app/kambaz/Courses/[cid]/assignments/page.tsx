@@ -12,7 +12,7 @@ import { RootState } from "@/app/kambaz/store";
 import * as client from "../../client";
 
 interface Assignment {
-    _id: string;
+    _id?: string;
     title: string;
     availableFrom: string;
     dueDate: string;
@@ -139,7 +139,7 @@ export default function AssignmentsPage() {
                                                 <Button 
                                                     variant="link" 
                                                     className="text-danger ms-2 p-0" 
-                                                    onClick={() => handleDelete(assignment._id)}
+                                                    onClick={() => handleDelete(assignment._id!)}
                                                 >
                                                     Delete
                                                 </Button>
