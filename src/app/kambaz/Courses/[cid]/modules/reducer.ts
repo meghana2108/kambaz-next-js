@@ -1,54 +1,50 @@
 "use client";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import modulesData from "../../../Database/modules.json";
-import { v4 as uuidv4 } from "uuid";
+
 interface Lesson {
   _id: string;
   name: string;
-  description: string;
-  module: string;
+  description?: string;
+  module?: string;
 }
 
 interface Module {
   _id: string;
   name: string;
-  description: string;
+  description?: string;
   course: string;
-  lessons: Lesson[];
+  lessons?: Lesson[];
   editing?: boolean; 
 }
 
 interface ModulesState {
   modules: Module[];
+  loading: boolean;
+  error: string | null;
 }
 
 const initialState: ModulesState = {
-  modules: modulesData as Module[],
+  modules: [],
+  loading: false,
+  error: null,
 };
 
 const moduleSlice = createSlice({
   name: "modules",
   initialState,
   reducers: {
-    setModule: (state, action) => {
+    setModule: (state, action: PayloadAction<Module[]>) => {
       state.modules = action.payload;
     },
-    addModule: (state, { payload: module }: PayloadAction<{ name: string; course: string }>) => {
-      const newModule: Module = {
-        _id: uuidv4(),
-        lessons: [],
-        name: module.name,
-        description: "",
-        course: module.course,
-      };
-      state.modules = [...state.modules, newModule];
+    addModule: (state, { payload: module }: PayloadAction<Module>) => {
+      state.modules = [...state.modules, module];
     },
     deleteModule: (state, { payload: moduleId }: PayloadAction<string>) => {
       state.modules = state.modules.filter((m) => m._id !== moduleId);
     },
     updateModule: (state, { payload: module }: PayloadAction<Module>) => {
       state.modules = state.modules.map((m) =>
-        m._id === module._id ? module : m
+        m._id === module._id ? {...m, ...module} : m
       );
     },
     editModule: (state, { payload: moduleId }: PayloadAction<string>) => {
@@ -56,8 +52,23 @@ const moduleSlice = createSlice({
         m._id === moduleId ? { ...m, editing: true } : m
       );
     },
+    setLoading: (state, action: PayloadAction<boolean>) => {
+      state.loading = action.payload;
+    },
+    setError: (state, action: PayloadAction<string | null>) => {
+      state.error = action.payload;
+    },
   },
 });
 
-export const { addModule, deleteModule, updateModule, editModule, setModule } = moduleSlice.actions;
+export const { 
+  addModule, 
+  deleteModule, 
+  updateModule, 
+  editModule, 
+  setModule,
+  setLoading,
+  setError 
+} = moduleSlice.actions;
+
 export default moduleSlice.reducer;

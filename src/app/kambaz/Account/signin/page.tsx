@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import * as client from "../client";
 import Link from "next/link";
@@ -18,6 +17,7 @@ export default function SignIn() {
         try {
             console.log('Signing in with:', credentials);
             const user = await client.signin(credentials);
+            console.log("FULL USER OBJECT FROM API:", user);
             console.log('User received:', user);
             
             if (!user) return;

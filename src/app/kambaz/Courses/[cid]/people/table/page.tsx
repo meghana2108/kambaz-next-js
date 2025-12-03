@@ -1,23 +1,18 @@
 "use client";
-import React from "react";
-import { useParams } from "next/navigation";
-import * as db from "../../../../Database";
+import React, { useState } from "react";
+import PeopleDetails from "../details";
+import Link from "next/link";
 import { Table } from "react-bootstrap";
 import { FaUserCircle } from "react-icons/fa";
 
-export default function PeopleTable() {
-  const { cid } = useParams();
-  const { users, enrollments } = db;
-  const enrolledUsers = users.filter((usr) =>
-    enrollments.some(
-      (enrollment) =>
-        enrollment.user === usr._id &&
-        enrollment.course.toLowerCase() === (cid as string).toLowerCase()
-    )
-  );
-
-  return (
+export default function PeopleTable({ users = [], fetchUsers }: { users?: any[]; fetchUsers?: () => void }) {
+  const [showDetails, setShowDetails] = useState(false);
+  const [showUserId, setShowUserId] = useState<string | null>(null);
+    return (
     <div id="wd-people-table">
+      {showDetails && (
+        <PeopleDetails uid={showUserId} onClose={() => { setShowDetails(false); fetchUsers(); }} />
+      )}
       <Table striped bordered hover>
         <thead>
           <tr>
@@ -30,11 +25,13 @@ export default function PeopleTable() {
           </tr>
         </thead>
         <tbody>
-          {enrolledUsers.map((user) => (
+          {users.map((user: any) => (
             <tr key={user._id}>
               <td className="wd-full-name text-nowrap">
+                <span className="text-decoration-none" onClick={() => {setShowDetails(true); setShowUserId(user._id);}}>
                 <FaUserCircle className="me-2 fs-1 text-secondary" />
                 {user.firstName} {user.lastName}
+                </span>
               </td>
               <td className="wd-login-id">{user.username}</td>
               <td className="wd-section">{user.section ?? "N/A"}</td>

@@ -74,15 +74,22 @@ export const createModuleForCourse = async (courseId: string, module: Omit<Modul
   return response.data;
 };
 
-export const deleteModule = async (moduleId: string): Promise<void> => {
-  const response = await axiosWithCredentials.delete(`${COURSES_API}/modules/${moduleId}`);
+export const deleteModule = async (courseId: string, moduleId: string): Promise<void> => {
+  const response = await axiosWithCredentials.delete(`${COURSES_API}/${courseId}/modules/${moduleId}`);
   return response.data;
 };
 
-export const updateModule = async (module: Module): Promise<Module> => {
-  const response = await axiosWithCredentials.put(`${COURSES_API}/modules/${module._id}`, module);
+export const updateModule = async (courseId, moduleId, updates) => {
+  console.log("PUT URL:", `${COURSES_API}/${courseId}/modules/${moduleId}`);
+  console.log("PUT BODY:", updates);
+
+  const response = await axiosWithCredentials.put(
+    `${COURSES_API}/${courseId}/modules/${moduleId}`,
+    updates
+  );
   return response.data;
 };
+
 
 export const findAssignmentsForCourse = async (courseId: string): Promise<Assignment[]> => {
   const response = await axiosWithCredentials.get(`${COURSES_API}/${courseId}/assignments`);
@@ -107,12 +114,22 @@ export const updateAssignment = async (assignment: Assignment): Promise<Assignme
   return response.data;
 };
 
-export const enrollInCourse = async (courseId: string): Promise<void> => {
-  const response = await axiosWithCredentials.post(`${USERS_API}/current/courses/${courseId}/enroll`);
+export const enrollInCourse = async (userId: string, courseId: string): Promise<void> => {
+  const response = await axiosWithCredentials.post(`${USERS_API}/${userId}/courses/${courseId}/enroll`);
   return response.data;
 };
 
-export const unenrollFromCourse = async (courseId: string): Promise<void> => {
-  const response = await axiosWithCredentials.delete(`${USERS_API}/current/courses/${courseId}/unenroll`);
+export const unenrollFromCourse = async (userId: string, courseId: string): Promise<void> => {
+  const response = await axiosWithCredentials.delete(`${USERS_API}/${userId}/courses/${courseId}/unenroll`);
+  return response.data;
+};
+
+export const findUsersforCourse = async (courseId: string) => {
+  const response = await axiosWithCredentials.get(`${COURSES_API}/${courseId}/users`);
+  return response.data;
+};
+
+export const findAssignmentById = async (assignmentId: string): Promise<Assignment> => {
+  const response = await axiosWithCredentials.get(`${COURSES_API}/assignments/${assignmentId}`);
   return response.data;
 };

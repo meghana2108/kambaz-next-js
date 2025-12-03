@@ -15,21 +15,26 @@ export default function Session({ children }: { children: ReactNode }) {
       dispatch(setCurrentUser(currentUser));
     } catch (err) {
       if (axios.isAxiosError(err)) {
-        console.error("Profile fetch error:", err.response?.data);
+        if (err.response?.status === 401) {
+          dispatch(setCurrentUser(null));
+        } else {
+          console.error("Profile fetch error:", err.response?.data);
+        }
       } else {
         console.error("Unknown error:", err);
       }
+    } finally {
+      setPending(false);
     }
-    setPending(false);
   }, [dispatch]);  
 
   useEffect(() => {
     fetchProfile();
   }, [fetchProfile]); 
 
-  if (!pending) {
-    return <>{children}</>;
+  if (pending) {
+    return null;
   }
 
-  return null; 
+  return <>{children}</>;
 }
