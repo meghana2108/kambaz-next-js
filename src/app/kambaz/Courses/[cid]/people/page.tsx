@@ -1,9 +1,9 @@
-import PeopleTable from "./table/page";
+import PeoplePage from "./table/page";
 export default function People() {
     return (
         <div>
             <h1>People</h1>
-            <PeopleTable/>  
+            <PeoplePage courseId={"cid"}/>  
         </div>
     );
 }
