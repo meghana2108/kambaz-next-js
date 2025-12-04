@@ -9,12 +9,12 @@ import { FormControl, Button } from "react-bootstrap";
 import type { AxiosError } from "axios";
 
 interface Credentials {
-    username?: string;
-    password?: string;
+    username: string;
+    password: string;
 }
 
 export default function SignIn() {
-    const [credentials, setCredentials] = useState<Credentials>({});
+    const [credentials, setCredentials] = useState<Credentials>({username: "", password: ""});
     const [error, setError] = useState("");
     const dispatch = useDispatch();
     const router = useRouter();
