@@ -4,7 +4,7 @@ import PeopleTable from "./table";
 import * as client from "../client"; 
 import { FaPlus } from "react-icons/fa";
 import { Button, FormControl, FormSelect } from "react-bootstrap";
-import type { User } from "../client";
+import type { User } from "../../Account/client";
 
 export default function Users() {
   const [users, setUsers] = useState<User[]>([]);

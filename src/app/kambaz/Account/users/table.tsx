@@ -3,49 +3,42 @@ import React, { useState } from "react";
 import PeopleDetails from "./details";
 import { Table } from "react-bootstrap";
 import { FaUserCircle } from "react-icons/fa";
+import type { User } from "../../Account/client";
 
-interface User {
-  _id?: string;
-  id?: string;
-  username: string;
-  firstName: string;
-  lastName: string;
-  section?: string;
-  role?: string;
-  lastActivity?: string;
-  totalActivity?: string;
+interface PeopleTableProps {
+  users?: User[];
+  fetchUsers?: () => void;
 }
 
-export default function PeopleTable({ 
-  users = [], 
-  fetchUsers 
-}: { 
-  users?: User[]; 
-  fetchUsers?: () => void;
-}) {
+export default function PeopleTable({ users = [], fetchUsers }: PeopleTableProps) {
   const [showDetails, setShowDetails] = useState(false);
   const [showUserId, setShowUserId] = useState<string | null>(null);
 
-  const handleCloseDetails = () => {
+  const openDetails = (id: string | undefined) => {
+    if (!id) return;
+    setShowUserId(id);
+    setShowDetails(true);
+  };
+
+  const closeDetails = () => {
     setShowDetails(false);
     setShowUserId(null);
   };
 
   const handleUpdate = () => {
-    if (fetchUsers) {
-      fetchUsers();
-    }
+    fetchUsers?.();
   };
 
   return (
     <div id="wd-people-table">
       {showDetails && (
-        <PeopleDetails 
-          uid={showUserId} 
-          onClose={handleCloseDetails}
+        <PeopleDetails
+          uid={showUserId}
+          onClose={closeDetails}
           onUpdate={handleUpdate}
         />
       )}
+
       <Table striped bordered hover>
         <thead>
           <tr>
@@ -57,26 +50,26 @@ export default function PeopleTable({
             <th>Total Activity</th>
           </tr>
         </thead>
+
         <tbody>
-          {users.map((user: User, index: number) => {
-            const userId = user._id || user.id || `user-${index}`;
+          {users.map((user, index) => {
+            const userId = user._id ?? `user-${index}`;
+
             return (
               <tr key={userId}>
                 <td className="wd-full-name text-nowrap">
-                  <span 
-                    className="text-decoration-none" 
-                    onClick={() => {
-                      if (user._id) {
-                        setShowDetails(true); 
-                        setShowUserId(user._id);
-                      }
+                  <span
+                    className="text-decoration-none"
+                    onClick={() => openDetails(user._id)}
+                    style={{
+                      cursor: user._id ? "pointer" : "default",
                     }}
-                    style={{ cursor: user._id ? "pointer" : "default" }}
                   >
                     <FaUserCircle className="me-2 fs-1 text-secondary" />
-                    {user.firstName} {user.lastName}
+                    {user.firstName ?? ""} {user.lastName ?? ""}
                   </span>
                 </td>
+
                 <td className="wd-login-id">{user.username}</td>
                 <td className="wd-section">{user.section ?? "N/A"}</td>
                 <td className="wd-role">{user.role ?? "Student"}</td>

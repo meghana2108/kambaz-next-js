@@ -83,7 +83,7 @@ export default function Signup() {
       />
       <FormSelect 
         value={user.role || "STUDENT"} 
-        onChange={(e) => setUser({ ...user, role: e.target.value })}
+        onChange={(e) => setUser({ ...user, role: e.target.value as User["role"] })}
         className="mb-2"
       >
         <option value="STUDENT">Student</option>

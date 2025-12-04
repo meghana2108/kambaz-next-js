@@ -4,7 +4,7 @@ import { FaCheck, FaUserCircle } from "react-icons/fa";
 import { FaPencil } from "react-icons/fa6";
 import { IoCloseSharp } from "react-icons/io5";
 import { FormControl, FormSelect } from "react-bootstrap";
-import type { User } from "../client";
+import type { User } from "../../Account/client";
 import * as client from "../client";
 
 interface PeopleDetailsProps {
