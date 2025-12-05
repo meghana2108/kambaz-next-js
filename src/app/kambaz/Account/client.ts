@@ -18,10 +18,10 @@ export interface User {
 const axiosWithCredentials = axios.create({ withCredentials: true });
 
 const HTTP_SERVER_RAW = process.env.NEXT_PUBLIC_HTTP_SERVER || 'http://localhost:4000';
-export const HTTP_SERVER = HTTP_SERVER_RAW.replace(/\/$/, ''); // Remove trailing slash
+export const HTTP_SERVER = HTTP_SERVER_RAW.replace(/\/$/, ''); 
 export const USERS_API = `${HTTP_SERVER}/api/users`;
 
-console.log('API Configuration:', { HTTP_SERVER, USERS_API }); // Debug log
+console.log('API Configuration:', { HTTP_SERVER, USERS_API });
 
 export const signin = async (credentials: { username: string; password: string }): Promise<User> => {
   const response = await axiosWithCredentials.post<User>(`${USERS_API}/signin`, credentials);

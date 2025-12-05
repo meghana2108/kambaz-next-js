@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setCourses, Course } from "../Courses/reducer";
-import { enrollInCourse, unenrollFromCourse } from "../enrollmentReducer";
+import { setEnrollments, enrollInCourse, unenrollFromCourse } from "../enrollmentReducer";
 import { RootState } from "../store";
 import * as client from "../Courses/client";
 import Link from "next/link";
@@ -43,13 +43,38 @@ export default function Dashboard() {
     } catch (error) {
       console.error(error);
     }
-  }, [dispatch]); 
+  }, [dispatch]);
+
+  const fetchEnrollments = useCallback(async () => {
+  if (!currentUser) {
+    console.log("No user, skipping enrollment fetch");
+    return;
+  }
+  
+  const userId = currentUser._id || currentUser.username || currentUser.loginId;
+  if (!userId) {
+    console.log("No user ID, skipping enrollment fetch");
+    return;
+  }
+    
+    try {
+    console.log("Fetching enrollments for user:", userId);
+    const userEnrollments = await client.fetchUserEnrollments(userId);
+    console.log("Enrollments fetched from backend:", userEnrollments);
+    dispatch(setEnrollments(userEnrollments));
+  } catch (error) {
+    console.error("Failed to fetch enrollments:", error);
+    dispatch(setEnrollments([]));
+  }
+}, [currentUser, dispatch]);
 
   useEffect(() => {
     if (currentUser) {
+      console.log("Current user loaded, fetching data...");
       fetchCourses();
+      fetchEnrollments(); 
     }
-  }, [currentUser, fetchCourses]); 
+  }, [currentUser, fetchCourses, fetchEnrollments]);
 
   const onAddNewCourse = async () => {
     try {
@@ -114,16 +139,26 @@ export default function Dashboard() {
 
   const handleEnroll = async (courseId: string) => {
   const userId = getUserId();
-  console.log("Attempting to enroll:", { userId, courseId }); 
+  console.log("=== ENROLL DEBUG ===");
+  console.log("Attempting to enroll:", { userId, courseId });
+  console.log("Current enrollments:", enrollments);
   
   if (currentUser && userId) {
     try {
+      console.log("Calling backend API...");
       await client.enrollInCourse(userId, courseId);
+      console.log("Backend enrollment successful!");
       dispatch(enrollInCourse({ userId, courseId }));
+      await fetchEnrollments();
+      
+      console.log("Enrollment complete! Updated enrollments:", enrollments);
+      console.log("✅ Successfully enrolled in", courseId);
+      
     } catch (error: unknown) {
       const err = error as { response?: { data?: { message?: string } } };
-      console.error("Full error object:", error); 
-      console.error("Error response:", err.response); 
+      console.error("=== ENROLLMENT ERROR ===");
+      console.error("Full error object:", error);
+      console.error("Error response:", err.response);
       alert(err.response?.data?.message || "Failed to enroll");
     }
   }
@@ -135,6 +170,8 @@ export default function Dashboard() {
       try {
         await client.unenrollFromCourse(userId, courseId);
         dispatch(unenrollFromCourse({ userId, courseId }));
+        await fetchEnrollments();
+        alert("Successfully unenrolled!");
       } catch (error: unknown) {
         const err = error as { response?: { data?: { message?: string } } };
         alert(err.response?.data?.message || "Failed to unenroll");
@@ -149,7 +186,6 @@ export default function Dashboard() {
       courseNameInputRef.current?.select();
     }, 0);
   };
-
 
   const coursesToDisplay = showAllCourses
     ? courses
@@ -188,6 +224,7 @@ export default function Dashboard() {
             </button>
           </h5>
           <FormControl
+            ref={courseNameInputRef}
             value={course.name}
             className="mb-2"
             onChange={(e) => setCourse({ ...course, name: e.target.value })}

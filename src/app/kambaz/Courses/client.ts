@@ -92,6 +92,15 @@ export const updateModule = async (
   return response.data;
 };
 
+export const fetchUserEnrollments = async (userId: string) => {
+  try {
+    const response = await axiosWithCredentials.get(`${USERS_API}/${userId}/enrollments`);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch enrollments:", error);
+    return [];
+  }
+};
 
 export const findAssignmentsForCourse = async (courseId: string): Promise<Assignment[]> => {
   const response = await axiosWithCredentials.get(`${COURSES_API}/${courseId}/assignments`);
