@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import * as quizClient from "../../quizClient";
 import { Button, Form, Card, Alert, Badge } from "react-bootstrap";
-import type { Quiz, QuizQuestion } from "../../quizzesReducer";
+import type { Quiz, QuizQuestion } from "../../../../quizzesReducer";
 
 export default function QuizPreview() {
   const { cid, qid } = useParams();

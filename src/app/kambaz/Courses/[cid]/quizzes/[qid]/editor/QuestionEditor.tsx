@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Button, Form, Card, Alert } from "react-bootstrap";
-import type { Quiz, QuizQuestion } from "../../quizzesReducer";
+import type { Quiz, QuizQuestion } from "../../../../quizzesReducer";
 
 interface Props {
   quiz: Quiz;
@@ -9,17 +9,21 @@ interface Props {
 }
 
 export default function QuestionEditor({ quiz, onQuizUpdate }: Props) {
-  const [editingQuestionId, setEditingQuestionId] = useState<string | null>(null);
-  const [editingQuestion, setEditingQuestion] = useState<Partial<QuizQuestion> | null>(null);
+  const [editingQuestionId, setEditingQuestionId] = useState<string | null>(
+    null
+  );
+  const [editingQuestion, setEditingQuestion] =
+    useState<Partial<QuizQuestion> | null>(null);
   const [showQuestionBank, setShowQuestionBank] = useState(false);
   const [questionGroups] = useState<string[]>([
     "General Knowledge",
     "Critical Thinking",
     "Problem Solving",
     "Analysis",
-    "Application"
+    "Application",
   ]);
-  const [selectedGroup, setSelectedGroup] = useState<string>("General Knowledge");
+  const [selectedGroup, setSelectedGroup] =
+    useState<string>("General Knowledge");
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleAddQuestion = () => {
@@ -48,7 +52,9 @@ export default function QuestionEditor({ quiz, onQuizUpdate }: Props) {
       group: selectedGroup,
     };
 
-    if (quiz.questions.find((q: QuizQuestion) => q._id === editingQuestion._id)) {
+    if (
+      quiz.questions.find((q: QuizQuestion) => q._id === editingQuestion._id)
+    ) {
       // Update existing
       const updated = quiz.questions.map((q: QuizQuestion) =>
         q._id === editingQuestion._id ? (questionToSave as QuizQuestion) : q
@@ -75,7 +81,9 @@ export default function QuestionEditor({ quiz, onQuizUpdate }: Props) {
     if (!confirm("Are you sure you want to delete this question?")) return;
     onQuizUpdate({
       ...quiz,
-      questions: quiz.questions.filter((q: QuizQuestion) => q._id !== questionId),
+      questions: quiz.questions.filter(
+        (q: QuizQuestion) => q._id !== questionId
+      ),
     });
   };
 
@@ -143,7 +151,10 @@ export default function QuestionEditor({ quiz, onQuizUpdate }: Props) {
                 type="text"
                 value={editingQuestion.title}
                 onChange={(e) =>
-                  setEditingQuestion({ ...editingQuestion, title: e.target.value })
+                  setEditingQuestion({
+                    ...editingQuestion,
+                    title: e.target.value,
+                  })
                 }
               />
             </Form.Group>
@@ -169,7 +180,10 @@ export default function QuestionEditor({ quiz, onQuizUpdate }: Props) {
                 rows={3}
                 value={editingQuestion.question}
                 onChange={(e) =>
-                  setEditingQuestion({ ...editingQuestion, question: e.target.value })
+                  setEditingQuestion({
+                    ...editingQuestion,
+                    question: e.target.value,
+                  })
                 }
               />
             </Form.Group>
@@ -177,52 +191,79 @@ export default function QuestionEditor({ quiz, onQuizUpdate }: Props) {
             {editingQuestion.type === "MULTIPLE_CHOICE" && (
               <div className="mb-3">
                 <Form.Label>Choices</Form.Label>
-                {editingQuestion.choices?.map((choice: { text: string; isCorrect: boolean }, index: number) => (
-                  <div key={index} className="d-flex align-items-center gap-2 mb-2">
-                    <Form.Check
-                      type="radio"
-                      name="correctChoice"
-                      checked={choice.isCorrect}
-                      onChange={() => {
-                        const newChoices = editingQuestion.choices!.map((c, i: number) => ({
-                          ...c,
-                          isCorrect: i === index,
-                        }));
-                        setEditingQuestion({ ...editingQuestion, choices: newChoices });
-                      }}
-                    />
-                    <Form.Control
-                      type="text"
-                      value={choice.text}
-                      onChange={(e) => {
-                        const newChoices = [...editingQuestion.choices!];
-                        newChoices[index].text = e.target.value;
-                        setEditingQuestion({ ...editingQuestion, choices: newChoices });
-                      }}
-                    />
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      onClick={() => {
-                        const newChoices = editingQuestion.choices!.filter(
-                          (_, i: number) => i !== index
-                        );
-                        setEditingQuestion({ ...editingQuestion, choices: newChoices });
-                      }}
+                {editingQuestion.choices?.map(
+                  (
+                    choice: { text: string; isCorrect: boolean },
+                    index: number
+                  ) => (
+                    <div
+                      key={index}
+                      className="d-flex align-items-center gap-2 mb-2"
                     >
-                      Remove
-                    </Button>
-                  </div>
-                ))}
+                      <Form.Check
+                        type="radio"
+                        name="correctChoice"
+                        checked={choice.isCorrect}
+                        onChange={() => {
+                          const newChoices = editingQuestion.choices!.map(
+                            (c, i: number) => ({
+                              ...c,
+                              isCorrect: i === index,
+                            })
+                          );
+                          setEditingQuestion({
+                            ...editingQuestion,
+                            choices: newChoices,
+                          });
+                        }}
+                      />
+                      <Form.Control
+                        type="text"
+                        value={choice.text}
+                        onChange={(e) => {
+                          const newChoices = [...editingQuestion.choices!];
+                          newChoices[index].text = e.target.value;
+                          setEditingQuestion({
+                            ...editingQuestion,
+                            choices: newChoices,
+                          });
+                        }}
+                      />
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        onClick={() => {
+                          const newChoices = editingQuestion.choices!.filter(
+                            (_, i: number) => i !== index
+                          );
+                          setEditingQuestion({
+                            ...editingQuestion,
+                            choices: newChoices,
+                          });
+                        }}
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  )
+                )}
                 <Button
                   variant="secondary"
                   size="sm"
                   onClick={() => {
                     const newChoices = [
                       ...(editingQuestion.choices || []),
-                      { text: `Option ${(editingQuestion.choices?.length || 0) + 1}`, isCorrect: false },
+                      {
+                        text: `Option ${
+                          (editingQuestion.choices?.length || 0) + 1
+                        }`,
+                        isCorrect: false,
+                      },
                     ];
-                    setEditingQuestion({ ...editingQuestion, choices: newChoices });
+                    setEditingQuestion({
+                      ...editingQuestion,
+                      choices: newChoices,
+                    });
                   }}
                 >
                   Add Choice
@@ -240,7 +281,10 @@ export default function QuestionEditor({ quiz, onQuizUpdate }: Props) {
                     name="trueFalse"
                     checked={editingQuestion.correctAnswer === true}
                     onChange={() =>
-                      setEditingQuestion({ ...editingQuestion, correctAnswer: true })
+                      setEditingQuestion({
+                        ...editingQuestion,
+                        correctAnswer: true,
+                      })
                     }
                   />
                   <Form.Check
@@ -249,7 +293,10 @@ export default function QuestionEditor({ quiz, onQuizUpdate }: Props) {
                     name="trueFalse"
                     checked={editingQuestion.correctAnswer === false}
                     onChange={() =>
-                      setEditingQuestion({ ...editingQuestion, correctAnswer: false })
+                      setEditingQuestion({
+                        ...editingQuestion,
+                        correctAnswer: false,
+                      })
                     }
                   />
                 </div>
@@ -259,37 +306,54 @@ export default function QuestionEditor({ quiz, onQuizUpdate }: Props) {
             {editingQuestion.type === "FILL_IN_BLANK" && (
               <div className="mb-3">
                 <Form.Label>Possible Correct Answers</Form.Label>
-                {editingQuestion.possibleAnswers?.map((answer: string, index: number) => (
-                  <div key={index} className="d-flex gap-2 mb-2">
-                    <Form.Control
-                      type="text"
-                      value={answer}
-                      onChange={(e) => {
-                        const newAnswers = [...(editingQuestion.possibleAnswers || [])];
-                        newAnswers[index] = e.target.value;
-                        setEditingQuestion({ ...editingQuestion, possibleAnswers: newAnswers });
-                      }}
-                    />
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      onClick={() => {
-                        const newAnswers = editingQuestion.possibleAnswers!.filter(
-                          (_, i: number) => i !== index
-                        );
-                        setEditingQuestion({ ...editingQuestion, possibleAnswers: newAnswers });
-                      }}
-                    >
-                      Remove
-                    </Button>
-                  </div>
-                ))}
+                {editingQuestion.possibleAnswers?.map(
+                  (answer: string, index: number) => (
+                    <div key={index} className="d-flex gap-2 mb-2">
+                      <Form.Control
+                        type="text"
+                        value={answer}
+                        onChange={(e) => {
+                          const newAnswers = [
+                            ...(editingQuestion.possibleAnswers || []),
+                          ];
+                          newAnswers[index] = e.target.value;
+                          setEditingQuestion({
+                            ...editingQuestion,
+                            possibleAnswers: newAnswers,
+                          });
+                        }}
+                      />
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        onClick={() => {
+                          const newAnswers =
+                            editingQuestion.possibleAnswers!.filter(
+                              (_, i: number) => i !== index
+                            );
+                          setEditingQuestion({
+                            ...editingQuestion,
+                            possibleAnswers: newAnswers,
+                          });
+                        }}
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  )
+                )}
                 <Button
                   variant="secondary"
                   size="sm"
                   onClick={() => {
-                    const newAnswers = [...(editingQuestion.possibleAnswers || []), ""];
-                    setEditingQuestion({ ...editingQuestion, possibleAnswers: newAnswers });
+                    const newAnswers = [
+                      ...(editingQuestion.possibleAnswers || []),
+                      "",
+                    ];
+                    setEditingQuestion({
+                      ...editingQuestion,
+                      possibleAnswers: newAnswers,
+                    });
                   }}
                 >
                   Add Answer
@@ -329,11 +393,14 @@ export default function QuestionEditor({ quiz, onQuizUpdate }: Props) {
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h5>
           Questions ({quiz.questions.length}) - Total Points:{" "}
-          {quiz.questions.reduce((sum: number, q: QuizQuestion) => sum + q.points, 0)}
+          {quiz.questions.reduce(
+            (sum: number, q: QuizQuestion) => sum + q.points,
+            0
+          )}
         </h5>
         <div>
-          <Button 
-            variant="outline-primary" 
+          <Button
+            variant="outline-primary"
             onClick={() => setShowQuestionBank(!showQuestionBank)}
             className="me-2"
           >
@@ -368,7 +435,7 @@ export default function QuestionEditor({ quiz, onQuizUpdate }: Props) {
                 ))}
               </Form.Select>
             </div>
-            
+
             <div className="border rounded p-3">
               <small className="text-muted">
                 Filter questions by group: <strong>{selectedGroup}</strong>
@@ -376,20 +443,39 @@ export default function QuestionEditor({ quiz, onQuizUpdate }: Props) {
               <div className="mt-2">
                 {quiz.questions
                   .filter((q: QuizQuestion) => {
-                    const matchesGroup = (q as QuizQuestion & { group?: string }).group === selectedGroup;
-                    const matchesSearch = searchQuery === "" || 
-                      q.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                      q.question.toLowerCase().includes(searchQuery.toLowerCase());
+                    const matchesGroup =
+                      (q as QuizQuestion & { group?: string }).group ===
+                      selectedGroup;
+                    const matchesSearch =
+                      searchQuery === "" ||
+                      q.title
+                        .toLowerCase()
+                        .includes(searchQuery.toLowerCase()) ||
+                      q.question
+                        .toLowerCase()
+                        .includes(searchQuery.toLowerCase());
                     return matchesGroup && matchesSearch;
                   })
                   .map((q: QuizQuestion) => (
-                    <div key={q._id} className="border rounded p-2 mb-2 bg-light">
-                      <strong>{q.title}</strong> ({q.points} pts) - {q.type.replace(/_/g, " ")}
-                      <div className="small text-muted">{q.question.substring(0, 100)}...</div>
+                    <div
+                      key={q._id}
+                      className="border rounded p-2 mb-2 bg-light"
+                    >
+                      <strong>{q.title}</strong> ({q.points} pts) -{" "}
+                      {q.type.replace(/_/g, " ")}
+                      <div className="small text-muted">
+                        {q.question.substring(0, 100)}...
+                      </div>
                     </div>
                   ))}
-                {quiz.questions.filter((q: QuizQuestion) => (q as QuizQuestion & { group?: string }).group === selectedGroup).length === 0 && (
-                  <div className="text-muted">No questions in this group yet.</div>
+                {quiz.questions.filter(
+                  (q: QuizQuestion) =>
+                    (q as QuizQuestion & { group?: string }).group ===
+                    selectedGroup
+                ).length === 0 && (
+                  <div className="text-muted">
+                    No questions in this group yet.
+                  </div>
                 )}
               </div>
             </div>
@@ -400,7 +486,9 @@ export default function QuestionEditor({ quiz, onQuizUpdate }: Props) {
       {editingQuestionId && renderQuestionForm()}
 
       {quiz.questions.length === 0 && !editingQuestion && (
-        <Alert variant="info">No questions yet. Click &quot;+ New Question&quot; to add one.</Alert>
+        <Alert variant="info">
+          No questions yet. Click &quot;+ New Question&quot; to add one.
+        </Alert>
       )}
 
       <div>
@@ -414,9 +502,10 @@ export default function QuestionEditor({ quiz, onQuizUpdate }: Props) {
                   </h6>
                   <p className="text-muted small">
                     {question.type.replace(/_/g, " ")}
-                    {(question as QuizQuestion & { group?: string }).group && 
-                      ` - ${(question as QuizQuestion & { group?: string }).group}`
-                    }
+                    {(question as QuizQuestion & { group?: string }).group &&
+                      ` - ${
+                        (question as QuizQuestion & { group?: string }).group
+                      }`}
                   </p>
                   <p>{question.question}</p>
                 </div>

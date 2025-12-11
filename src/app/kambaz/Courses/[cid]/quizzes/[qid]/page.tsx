@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/app/kambaz/store";
 import * as quizClient from "../quizClient";
 import { Button, Card } from "react-bootstrap";
-import type { Quiz } from "../quizzesReducer";
+import type { Quiz } from "../../../quizzesReducer";
 import type { QuizAttempt } from "../quizClient";
 
 export default function QuizDetails() {

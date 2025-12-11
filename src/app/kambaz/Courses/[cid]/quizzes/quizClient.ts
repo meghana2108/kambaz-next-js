@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { Quiz, QuizQuestion } from "./quizzesReducer";
+import type { Quiz, QuizQuestion } from "../../quizzesReducer";
 
 const HTTP_SERVER = process.env.NEXT_PUBLIC_HTTP_SERVER;
 const axiosWithCredentials = axios.create({ withCredentials: true });

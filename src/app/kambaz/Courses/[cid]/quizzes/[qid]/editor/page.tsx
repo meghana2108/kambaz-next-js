@@ -2,10 +2,10 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
-import { updateQuiz as updateQuizAction } from "../../quizzesReducer";
+import { updateQuiz as updateQuizAction } from "../../../../quizzesReducer";
 import * as quizClient from "../../quizClient";
 import { Button, Form, Nav, Tab } from "react-bootstrap";
-import type { Quiz } from "../../quizzesReducer";
+import type { Quiz } from "../../../../quizzesReducer";
 import QuestionEditor from "./QuestionEditor";
 
 export default function QuizEditor() {

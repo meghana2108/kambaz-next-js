@@ -9,7 +9,7 @@ import {
   deleteQuiz as deleteQuizAction,
   updateQuiz,
   Quiz,
-} from "./quizzesReducer";
+} from "../../quizzesReducer";
 import * as quizClient from "./quizClient";
 import { Button, Dropdown } from "react-bootstrap";
 import Link from "next/link";

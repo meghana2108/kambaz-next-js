@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import * as quizClient from "../../quizClient";
 import { Button, Form, Card, Alert } from "react-bootstrap";
-import type { Quiz, QuizQuestion } from "../../quizzesReducer";
+import type { Quiz, QuizQuestion } from "../../../../quizzesReducer";
 import type { QuizAttempt } from "../../quizClient";
 
 export default function TakeQuiz() {
