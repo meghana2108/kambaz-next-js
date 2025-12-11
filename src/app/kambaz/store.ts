@@ -5,7 +5,7 @@ import modulesReducer from "./Courses/[cid]/modules/reducer";
 import accountReducer from "./Account/reducer";
 import assignmentsReducer from "./Courses/[cid]/assignments/reducer";
 import enrollmentReducer from "./enrollmentReducer";
-import quizzesReducer from "./Courses/[cid]/Quizzes/quizzesReducer";
+import quizzesReducer from "./Courses/quizzesReducer";
 const store = configureStore({
   reducer: {
     coursesReducer,
